@@ -1,0 +1,3592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thirteen4Six — Command Center</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>if(typeof Chart==='undefined'){document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('canvas').forEach(function(c){c.parentElement.innerHTML='<p style="text-align:center;color:#8A92A6;padding:20px;font-size:13px;">Charts require an internet connection to load Chart.js</p>';});});}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   THIRTEEN4SIX DESIGN TOKENS
+   Brand identity from DESIGN.md — matches in-unit printed materials
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Primary */
+  --brand-blue:       #0A3191;
+  --brand-blue-dark:  #071E5E;
+  --brand-blue-light: #1A4FBF;
+  --cream:            #FAF6ED;
+  --cream-dark:       #F0E8D8;
+  --white:            #FFFFFF;
+
+  /* Status */
+  --success:    #1B7A3D;
+  --success-bg: #E8F5ED;
+  --warning:    #C87D14;
+  --warning-bg: #FFF6E5;
+  --danger:     #B82525;
+  --danger-bg:  #FDF0F0;
+
+  /* Neutral */
+  --text:           #0A3191;
+  --text-secondary: #4A5A7A;
+  --text-muted:     #8A92A6;
+  --border:         #D4CBB8;
+  --border-light:   #E8E0D0;
+
+  /* Typography */
+  --font-display: 'Playfair Display', 'Georgia', serif;
+  --font-body:    'DM Sans', 'Inter', -apple-system, system-ui, sans-serif;
+  --font-brand:   'Playfair Display', 'Georgia', serif;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(10,49,145,0.06);
+  --shadow-md: 0 2px 8px rgba(10,49,145,0.08);
+  --shadow-lg: 0 4px 16px rgba(10,49,145,0.12);
+
+  /* Radii */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Global focus-visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); border: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PASSWORD GATE
+   ══════════════════════════════════════════════════════════════ */
+#password-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+#password-gate.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gate-brand {
+  margin-bottom: 52px;
+  text-align: center;
+  padding: 0 24px;
+}
+.gate-logo {
+  width: 280px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.gate-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.gate-input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  text-align: center;
+  letter-spacing: 2px;
+  transition: border-color 0.2s;
+}
+.gate-input:focus {
+  border-color: var(--brand-blue);
+}
+.gate-input::placeholder {
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+.gate-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--brand-blue);
+  color: var(--white);
+  border: none;
+  border-radius: var(--r-sm);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.gate-btn:hover { background: var(--brand-blue-dark); }
+
+.gate-error {
+  font-size: 13px;
+  color: var(--danger);
+  height: 20px;
+}
+
+.gate-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background: var(--brand-blue-dark);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 32px;
+}
+.gate-footer-logo {
+  height: 22px;
+  width: auto;
+  display: block;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════════ */
+.header {
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 40px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.header-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-blue);
+}
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-date { font-size: 13px; color: var(--text-secondary); }
+.phase-pill {
+  background: var(--brand-blue);
+  color: var(--white);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUICK LINKS
+   ══════════════════════════════════════════════════════════════ */
+.quicklinks {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  overflow-x: auto;
+}
+.ql-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--brand-blue);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .2s;
+  font-family: var(--font-body);
+}
+.ql-btn:hover { border-color: var(--brand-blue); background: var(--cream); }
+.ql-btn.primary {
+  background: var(--brand-blue);
+  color: var(--white);
+  border-color: var(--brand-blue);
+}
+.ql-btn.primary:hover { background: var(--brand-blue-dark); border-color: var(--brand-blue-dark); }
+.ql-divider { width: 1px; height: 24px; background: var(--border-light); margin: 0 4px; }
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════════════════════════ */
+.page { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
+
+/* ── Section Badge ─────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  background: var(--brand-blue);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+/* ── Page Title ────────────────────────────────────────────── */
+.page-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--brand-blue);
+  margin: 12px 0 8px;
+  line-height: 1.1;
+}
+.page-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SCORE CARDS
+   ══════════════════════════════════════════════════════════════ */
+.scores {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.score-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+  border-left: 4px solid var(--border);
+}
+.score-card:hover { border-color: var(--brand-blue-light); box-shadow: var(--shadow-md); }
+.score-card.ok   { border-left-color: var(--success); }
+.score-card.warn { border-left-color: var(--warning); }
+.score-card.bad  { border-left-color: var(--danger); }
+
+.sc-badge {
+  display: inline-block;
+  background: var(--brand-blue);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 5px;
+  margin-bottom: 12px;
+}
+
+.sc-value {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--brand-blue);
+  letter-spacing: -1px;
+}
+
+.sc-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.sc-delta {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sc-delta.ok   { color: var(--success); }
+.sc-delta.warn { color: var(--warning); }
+.sc-delta.bad  { color: var(--danger); }
+
+/* ══════════════════════════════════════════════════════════════
+   GRID
+   ══════════════════════════════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+}
+.col-left  { display: flex; flex-direction: column; gap: 20px; }
+.col-right { display: flex; flex-direction: column; gap: 20px; }
+
+/* ══════════════════════════════════════════════════════════════
+   CARD
+   ══════════════════════════════════════════════════════════════ */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.card:hover { border-color: var(--brand-blue-light); box-shadow: var(--shadow-sm); }
+
+.card-header {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brand-blue);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.card-body { padding: 20px 24px; }
+.card-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* ── Chart ───────────────────────────────────────────────── */
+.chart-wrap { position: relative; height: 220px; }
+
+/* ══════════════════════════════════════════════════════════════
+   MONTH TABLE
+   ══════════════════════════════════════════════════════════════ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.data-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--border);
+}
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand-blue);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--cream); }
+.data-table .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.data-table .status-ok   { color: var(--success); font-weight: 600; }
+.data-table .status-warn { color: var(--warning); font-weight: 600; }
+.data-table .status-bad  { color: var(--danger); font-weight: 600; }
+.data-table .month-label { font-weight: 600; }
+.data-table .future { opacity: 0.5; font-style: italic; }
+
+/* ══════════════════════════════════════════════════════════════
+   MARKET POSITION
+   ══════════════════════════════════════════════════════════════ */
+.market-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.market-stat:last-child { border-bottom: none; }
+.market-label { font-size: 13px; color: var(--text-secondary); }
+.market-values { display: flex; gap: 20px; align-items: center; }
+.market-you { font-weight: 700; color: var(--brand-blue); font-size: 15px; }
+.market-median { font-weight: 500; color: var(--text-muted); font-size: 13px; }
+
+.position-bar {
+  height: 8px;
+  background: var(--cream-dark);
+  border-radius: 4px;
+  position: relative;
+  margin-top: 10px;
+}
+.position-range {
+  position: absolute;
+  height: 100%;
+  background: var(--brand-blue);
+  opacity: 0.15;
+  border-radius: 4px;
+}
+.position-marker {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--brand-blue);
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  top: -3px;
+  box-shadow: var(--shadow-sm);
+}
+.position-marker-label {
+  position: absolute;
+  top: -22px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-blue);
+  transform: translateX(-50%);
+  left: 50%;
+  white-space: nowrap;
+}
+
+/* ── Revenue Simulator ──────────────────────────────────────── */
+.sim-card {
+  background: var(--cream);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.sim-card h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brand-blue);
+  margin: 0 0 16px;
+}
+.sim-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.sim-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  min-width: 110px;
+  flex-shrink: 0;
+}
+.sim-slider-wrap {
+  flex: 1;
+  position: relative;
+}
+.sim-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cream-dark);
+  outline: none;
+  cursor: pointer;
+}
+.sim-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+.sim-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+.sim-slider:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+.sim-value {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-primary);
+  min-width: 52px;
+  text-align: right;
+}
+.sim-target-mark {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 10px;
+  border-left: 2px dashed var(--warning);
+  pointer-events: none;
+}
+.sim-target-label {
+  position: absolute;
+  top: -18px;
+  font-size: 10px;
+  color: var(--warning);
+  font-weight: 600;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.sim-results {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+.sim-result-box {
+  text-align: center;
+}
+.sim-result-box .sim-result-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--brand-blue);
+}
+.sim-result-box .sim-result-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.sim-result-box.sim-vs-target .sim-result-value {
+  font-size: 16px;
+}
+.sim-vs-target.status-success .sim-result-value { color: var(--success); }
+.sim-vs-target.status-warning .sim-result-value { color: var(--warning); }
+.sim-vs-target.status-danger .sim-result-value { color: var(--danger); }
+
+/* ── Percentile Badge ──────────────────────────────────────── */
+.percentile-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 2px solid;
+  margin-bottom: 12px;
+}
+.percentile-badge .pct-rank {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+}
+.percentile-badge .pct-sub {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.percentile-badge.pct-success {
+  border-color: var(--success);
+  background: rgba(27,122,61,0.06);
+}
+.percentile-badge.pct-success .pct-rank { color: var(--success); }
+.percentile-badge.pct-success .pct-sub { color: var(--success); }
+.percentile-badge.pct-warning {
+  border-color: var(--warning);
+  background: rgba(200,125,20,0.06);
+}
+.percentile-badge.pct-warning .pct-rank { color: var(--warning); }
+.percentile-badge.pct-warning .pct-sub { color: var(--warning); }
+.percentile-badge.pct-danger {
+  border-color: var(--danger);
+  background: rgba(184,37,37,0.06);
+}
+.percentile-badge.pct-danger .pct-rank { color: var(--danger); }
+.percentile-badge.pct-danger .pct-sub { color: var(--danger); }
+
+/* ── Trend Arrows ──────────────────────────────────────────── */
+.trend-arrow {
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+.trend-up-good { color: var(--success); }
+.trend-up-bad { color: var(--danger); }
+.trend-down-good { color: var(--success); }
+.trend-down-bad { color: var(--danger); }
+.trend-flat { color: var(--text-muted); }
+
+/* ── Seasonal Chart ────────────────────────────────────────── */
+.seasonal-chart-wrap {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+.seasonal-chart-wrap h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 12px;
+}
+.seasonal-chart-container {
+  position: relative;
+  height: 200px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   EVENT CALENDAR
+   ══════════════════════════════════════════════════════════════ */
+.event-list { display: flex; flex-direction: column; }
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background .15s;
+  cursor: pointer;
+}
+.event-row:last-child { border-bottom: none; }
+.event-row:hover { background: var(--cream); }
+.event-row.done { opacity: 0.4; }
+.event-row.done .event-name { text-decoration: line-through; }
+
+.ev-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.ev-check.checked { background: var(--success); border-color: var(--success); }
+.ev-check.checked::after { content: ''; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
+
+.ev-date  { font-size: 12px; color: var(--text-secondary); min-width: 72px; font-weight: 500; }
+.ev-info  { flex: 1; }
+.event-name  { font-size: 13px; font-weight: 600; color: var(--brand-blue); }
+.ev-note  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.ev-price { font-size: 13px; font-weight: 700; color: var(--brand-blue); min-width: 110px; text-align: right; }
+
+/* ── Event Enhancements (S3) ──────────────────────────────── */
+.ev-countdown {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: right;
+}
+.ev-countdown.urgent { color: var(--danger); }
+.ev-countdown.soon   { color: var(--warning); }
+.ev-countdown.passed { color: var(--text-muted); font-style: italic; }
+
+.event-row.past-event { opacity: 0.45; }
+.event-row.past-event .event-name { text-decoration: line-through; }
+.event-row.underpriced { border-left: 3px solid var(--danger); padding-left: 21px; }
+
+.ev-underpriced {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--danger);
+  margin-top: 2px;
+}
+
+.event-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  padding: 10px 24px 6px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+.event-group-label .toggle-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.event-group-label .toggle-arrow.collapsed { transform: rotate(-90deg); }
+
+.event-impact {
+  padding: 14px 24px;
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.event-impact-row {
+  font-size: 13px;
+  color: var(--brand-blue);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.event-impact-row svg { flex-shrink: 0; }
+.event-impact-row strong { font-weight: 700; }
+.event-impact-value {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--brand-blue);
+}
+
+.chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.chip-danger  { background: var(--danger-bg); color: var(--danger); }
+.chip-success { background: var(--success-bg); color: var(--success); }
+.chip-warning { background: var(--warning-bg); color: var(--warning); }
+.chip-muted   { background: var(--cream-dark); color: var(--text-muted); }
+
+/* ══════════════════════════════════════════════════════════════
+   ACTION CHECKLIST
+   ══════════════════════════════════════════════════════════════ */
+.action-list { display: flex; flex-direction: column; }
+.action-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background .15s;
+}
+.action-row:last-child { border-bottom: none; }
+.action-row:hover { background: var(--cream); }
+.action-row.done { opacity: 0.4; }
+.action-row.done .act-text { text-decoration: line-through; }
+
+.act-check {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.act-check.checked { background: var(--success); border-color: var(--success); }
+.act-check.checked::after { content: ''; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
+
+.act-body { flex: 1; }
+.act-text { font-size: 13px; font-weight: 600; color: var(--brand-blue); line-height: 1.4; }
+.act-note { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.priority-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 5px;
+  margin-top: 4px;
+  display: inline-block;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.p1 { background: var(--danger-bg); color: var(--danger); }
+.p2 { background: var(--warning-bg); color: var(--warning); }
+.p3 { background: var(--cream-dark); color: var(--text-muted); }
+
+/* ── Action Center Enhancements (S4) ─────────────────────── */
+.action-progress {
+  padding: 16px 24px 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+.action-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.action-progress-bar {
+  height: 8px;
+  background: var(--cream-dark);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.action-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease, background 0.3s ease;
+}
+.action-progress-fill.ok   { background: var(--success); }
+.action-progress-fill.warn { background: var(--warning); }
+.action-progress-fill.bad  { background: var(--danger); }
+
+.action-tabs {
+  display: flex;
+  border-bottom: 1.5px solid var(--border-light);
+  padding: 0 24px;
+  gap: 0;
+  overflow-x: auto;
+}
+.action-tab {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+  font-family: var(--font-body);
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.action-tab:hover { color: var(--brand-blue); }
+.action-tab.active {
+  color: var(--brand-blue);
+  border-bottom-color: var(--brand-blue);
+}
+.action-tab .tab-count {
+  font-size: 10px;
+  background: var(--cream-dark);
+  color: var(--text-muted);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+  font-weight: 700;
+}
+.action-tab.active .tab-count {
+  background: var(--brand-blue);
+  color: var(--white);
+}
+
+.action-group-divider {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 10px 24px 4px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.act-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+
+.due-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: var(--cream-dark);
+  color: var(--text-secondary);
+}
+.due-chip.overdue {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.action-row.overdue-row { border-left: 3px solid var(--danger); padding-left: 21px; }
+
+.add-action-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-top: 1px solid var(--border-light);
+}
+.add-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px dashed var(--border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+}
+.add-action-btn:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+.add-action-form {
+  display: none;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+}
+.add-action-form.visible { display: flex; }
+.add-action-input {
+  flex: 1;
+  padding: 6px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+}
+.add-action-input:focus { border-color: var(--brand-blue); }
+.add-action-select {
+  padding: 6px 8px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+}
+.add-action-submit {
+  padding: 6px 14px;
+  background: var(--brand-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.add-action-submit:hover { background: var(--brand-blue-dark); }
+
+/* ══════════════════════════════════════════════════════════════
+   SUPERHOST / RATINGS
+   ══════════════════════════════════════════════════════════════ */
+.host-stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.host-stat {
+  background: var(--cream);
+  border-radius: var(--r-sm);
+  padding: 14px;
+  text-align: center;
+}
+.host-stat .hs-val {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--brand-blue);
+}
+.host-stat .hs-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+.ratings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rating-box {
+  background: var(--cream);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+}
+.rating-box .r-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.rating-box .r-val   { font-size: 22px; font-weight: 700; color: var(--brand-blue); letter-spacing: -0.5px; font-family: var(--font-display); }
+.rating-box .r-bar { height: 4px; background: var(--border-light); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.rating-box .r-fill { height: 100%; background: var(--brand-blue); border-radius: 2px; }
+
+/* ══════════════════════════════════════════════════════════════
+   BOOKING PIPELINE TABLE (S2)
+   ══════════════════════════════════════════════════════════════ */
+.booking-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.booking-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  background: var(--cream);
+  border-bottom: 1.5px solid var(--border);
+}
+.booking-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--brand-blue);
+}
+.booking-table tr:last-child td { border-bottom: none; }
+.booking-table tr:hover td { background: var(--cream); }
+.booking-table .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.booking-table tr.bk-completed td { color: var(--text-muted); }
+.booking-table tr.bk-completed .bk-guest { text-decoration: line-through; }
+.booking-table tr.bk-highlight td { background: rgba(10,49,145,0.03); }
+.booking-table tr.bk-highlight td:first-child { border-left: 3px solid var(--brand-blue); padding-left: 11px; }
+.bk-guest { font-weight: 600; }
+.bk-nights-badge {
+  display: inline-block;
+  background: var(--brand-blue);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REVENUE PIPELINE (S2)
+   ══════════════════════════════════════════════════════════════ */
+.pipeline-box {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.15s;
+}
+.pipeline-box:last-child { border-bottom: none; }
+.pipeline-box:hover { background: var(--cream); }
+
+.pipeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.pipeline-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+.pipeline-range {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.pipeline-amount {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--brand-blue);
+  line-height: 1;
+  margin: 6px 0;
+  letter-spacing: -0.5px;
+}
+.pipeline-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.pipeline-bar-wrap {
+  height: 8px;
+  background: var(--cream-dark);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.pipeline-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+.pipeline-bar-fill.status-ok   { background: var(--success); }
+.pipeline-bar-fill.status-warn { background: var(--warning); }
+.pipeline-bar-fill.status-bad  { background: var(--danger); }
+
+.pipeline-gap {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PIPELINE ALERT (S2)
+   ══════════════════════════════════════════════════════════════ */
+.pipeline-alert {
+  border: 1.5px solid var(--warning);
+  border-radius: 10px;
+  background: var(--warning-bg);
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--brand-blue);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 20px 20px;
+  line-height: 1.5;
+}
+.pipeline-alert.alert-danger { border-color: var(--danger); background: var(--danger-bg); }
+.pipeline-alert svg { flex-shrink: 0; margin-top: 1px; color: var(--warning); }
+.pipeline-alert.alert-danger svg { color: var(--danger); }
+.pipeline-alert strong { font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════════
+   ALERT
+   ══════════════════════════════════════════════════════════════ */
+.alert-banner {
+  border: 1.5px solid var(--brand-blue);
+  border-radius: 10px;
+  background: var(--cream);
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--brand-blue);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.alert-banner svg { flex-shrink: 0; margin-top: 2px; }
+.alert-banner strong { font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════════
+   GUEST TOOLKIT (S5)
+   ══════════════════════════════════════════════════════════════ */
+.toolkit-section {
+  margin-top: 28px;
+}
+
+.msg-tabs {
+  display: flex;
+  border-bottom: 1.5px solid var(--border-light);
+  padding: 0;
+  overflow-x: auto;
+}
+.msg-tab {
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  transition: color 0.2s, border-color 0.2s;
+}
+.msg-tab:hover { color: var(--brand-blue); }
+.msg-tab.active {
+  color: var(--brand-blue);
+  border-bottom-color: var(--brand-blue);
+}
+
+.msg-content { padding: 20px 24px; }
+
+.msg-timing {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.msg-guest-fields {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.msg-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.msg-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+.msg-field-input {
+  padding: 6px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  width: 180px;
+}
+.msg-field-input:focus { border-color: var(--brand-blue); }
+
+.msg-template-box {
+  background: var(--cream);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-sm);
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--brand-blue);
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+
+.msg-placeholder {
+  display: inline;
+  background: rgba(10,49,145,0.08);
+  color: var(--brand-blue-light);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.msg-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: var(--white);
+  color: var(--brand-blue);
+  border: 1.5px solid var(--brand-blue);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.msg-copy-btn:hover { background: var(--brand-blue); color: var(--white); }
+.msg-copy-btn.copied {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--white);
+}
+
+/* House Rules */
+.house-rules-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  user-select: none;
+  transition: background 0.15s;
+}
+.house-rules-toggle:hover { background: var(--cream); }
+.house-rules-toggle .toggle-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.house-rules-toggle .toggle-arrow.collapsed { transform: rotate(-90deg); }
+.house-rules-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand-blue);
+}
+.house-rules-body {
+  padding: 0 24px 16px;
+}
+.house-rule-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--brand-blue);
+  border-bottom: 1px solid var(--border-light);
+}
+.house-rule-item:last-child { border-bottom: none; }
+.house-rule-icon { font-size: 15px; width: 22px; text-align: center; }
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+.site-footer {
+  background: var(--brand-blue-dark);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 32px;
+}
+.footer-logo {
+  height: 22px;
+  width: auto;
+  display: block;
+  opacity: 0.7;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MONTHLY REPORT
+   ══════════════════════════════════════════════════════════════ */
+.report-section {
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding: 0 32px;
+}
+.report-section .page-title { font-size: 22px; margin-top: 10px; }
+
+.month-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.month-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: 1.5px solid var(--border-light);
+  background: var(--white);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.month-pill:hover:not(.month-pill-disabled) {
+  border-color: var(--brand-blue);
+  color: var(--brand-blue);
+}
+.month-pill.month-pill-active {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--white);
+}
+.month-pill-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.month-pill-has-data {
+  border-color: var(--brand-blue);
+  color: var(--brand-blue);
+  background: rgba(10,49,145,0.04);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.report-metric {
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.report-metric-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--brand-blue);
+  line-height: 1.1;
+}
+.report-metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.report-comparison {
+  padding: 16px 0;
+  border-top: 1px solid var(--border-light);
+}
+.report-comparison h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+}
+.report-comp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.report-comp-label { color: var(--text-secondary); }
+.report-comp-value { font-weight: 600; }
+.report-comp-up { color: var(--success); }
+.report-comp-down { color: var(--danger); }
+.report-comp-neutral { color: var(--text-muted); }
+
+.report-insights {
+  padding: 16px 0;
+  border-top: 1px solid var(--border-light);
+}
+.report-insights h4 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+}
+.report-insight-item {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  padding-left: 16px;
+  position: relative;
+}
+.report-insight-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--brand-blue);
+  font-weight: 700;
+}
+
+.report-print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: var(--white);
+  border: 1.5px solid var(--brand-blue);
+  border-radius: 8px;
+  color: var(--brand-blue);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-top: 16px;
+}
+.report-print-btn:hover {
+  background: var(--brand-blue);
+  color: var(--white);
+}
+
+.report-no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .scores { grid-template-columns: repeat(2, 1fr); }
+  .grid   { grid-template-columns: 1fr; }
+  .report-grid { grid-template-columns: repeat(2, 1fr); }
+  .sim-results { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .scores { grid-template-columns: 1fr; }
+  .header { padding: 0 20px; }
+  .quicklinks { padding: 0 16px; overflow-x: auto; flex-wrap: nowrap; }
+  .page { padding: 20px 16px 48px; }
+  .gate-logo { width: 200px; }
+  .sc-value { font-size: 36px; }
+  .report-grid { grid-template-columns: 1fr; }
+  .report-section { padding: 0 16px; }
+  .toolkit-section { padding: 0 16px; }
+  .booking-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .msg-tabs { overflow-x: auto; flex-wrap: nowrap; }
+  .msg-tab { white-space: nowrap; flex-shrink: 0; }
+  .sim-row { flex-direction: column; gap: 8px; }
+  .sim-label { min-width: auto; }
+  .percentile-badge { padding: 8px 12px; }
+  .percentile-badge .pct-rank { font-size: 18px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PRINT STYLESHEET
+   ══════════════════════════════════════════════════════════════ */
+@media print {
+  /* Hide non-report elements */
+  #password-gate, .header, .quicklinks, .toolkit-section,
+  .report-print-btn, .month-pills, .site-footer { display: none !important; }
+
+  /* Hide interactive cards */
+  .col-right .card:has(#action-list),
+  .col-right .card:has(#market-simulator),
+  .sim-card, #market-simulator { display: none !important; }
+
+  /* Reset page styles */
+  body { background: white !important; }
+  .page { padding: 0 !important; max-width: 100% !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
+
+  /* Full-width layout */
+  .grid { grid-template-columns: 1fr !important; }
+  .scores { grid-template-columns: repeat(4, 1fr) !important; }
+  .report-section { margin-top: 20px !important; padding: 0 !important; }
+  .report-grid { grid-template-columns: repeat(3, 1fr) !important; }
+
+  /* Keep chart and report visible */
+  .chart-wrapper, .report-section .card { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Clean typography */
+  * { color: black !important; }
+  .badge, .chip { border: 1px solid #999 !important; background: transparent !important; color: #333 !important; }
+  .score-card { background: #f9f9f9 !important; }
+  .report-metric { background: #f5f5f5 !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PASSWORD GATE
+     ══════════════════════════════════════════════════════════════ -->
+<div id="password-gate">
+  <div class="gate-brand">
+    <img src="Logo/1346_logo-blue.svg" alt="Thirteen4Six" class="gate-logo">
+  </div>
+  <form class="gate-form" onsubmit="return checkPassword()">
+    <label for="gate-pw" class="sr-only">Password</label>
+    <input type="password" id="gate-pw" class="gate-input" placeholder="Enter password" autocomplete="off" autofocus aria-label="Enter password">
+    <button type="submit" class="gate-btn">Enter</button>
+    <div class="gate-error" id="gate-error"></div>
+  </form>
+  <div class="gate-footer">
+    <img src="Logo/1346_logo-white.svg" alt="Thirteen4Six" class="gate-footer-logo">
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     HEADER
+     ══════════════════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <img src="Logo/1346_logo-blue.svg" alt="Thirteen4Six" class="header-logo">
+    <span class="header-title">Command Center</span>
+  </div>
+  <div class="header-right">
+    <span class="header-date" id="today-date"></span>
+    <div class="phase-pill">Phase 1 — Foundation</div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════
+     QUICK LINKS
+     ══════════════════════════════════════════════════════════════ -->
+<nav class="quicklinks" aria-label="Quick links">
+  <a href="https://www.airbnb.com/hosting/listings" target="_blank" class="ql-btn primary">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Manage Listing
+  </a>
+  <a href="https://www.airbnb.com/hosting/calendar" target="_blank" class="ql-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Calendar
+  </a>
+  <a href="https://www.airbnb.com/hosting/inbox" target="_blank" class="ql-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Messages
+  </a>
+  <a href="https://www.airbnb.com/progress/reviews" target="_blank" class="ql-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Reviews
+  </a>
+  <div class="ql-divider"></div>
+  <a href="https://pricelabs.co" target="_blank" class="ql-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    PriceLabs
+  </a>
+  <a href="https://www.airbnb.com/rooms/1436366815078329705" target="_blank" class="ql-btn">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    View Listing
+  </a>
+  <div class="ql-divider"></div>
+  <a href="listing_comparison.html" target="_blank" class="ql-btn" aria-label="Open Listing Copy tool">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Listing Copy
+  </a>
+  <a href="title_focus_group.html" target="_blank" class="ql-btn" aria-label="Open Title Research tool">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Title Research
+  </a>
+  <a href="pricelabs_setup_and_insights.html" target="_blank" class="ql-btn" aria-label="Open PriceLabs Setup guide">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    PriceLabs Setup
+  </a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE
+     ══════════════════════════════════════════════════════════════ -->
+<main class="page">
+
+  <!-- Page heading -->
+  <span class="badge">Revenue</span>
+  <h1 class="page-title">Revenue Dashboard</h1>
+  <p class="page-subtitle">Private DC Suite · Columbia Heights · March 2026 Data</p>
+
+  <!-- Alert -->
+  <div class="alert-banner">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span><strong>How to update:</strong> Edit the data block at the bottom of this file. Each value has a comment explaining what it is and where to find it. Monthly refresh takes ~5 minutes.</span>
+  </div>
+
+  <!-- ── Score Cards ──────────────────────────────────────── -->
+  <div class="scores" id="score-cards"></div>
+
+  <!-- ── Main Grid ────────────────────────────────────────── -->
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+
+      <!-- Revenue Chart -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Revenue vs Target
+          </span>
+          <span class="chip chip-muted">2026 YTD</span>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+          <p class="card-note">Dashed line = $3,800/month target. Lighter bars = projected revenue from upcoming bookings.</p>
+        </div>
+      </div>
+
+      <!-- Month-over-Month Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="22"/></svg>
+            Month-over-Month
+          </span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table" id="month-table">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th style="text-align:right">Paid</th>
+                <th style="text-align:right">Upcoming</th>
+                <th style="text-align:right">Total</th>
+                <th style="text-align:right">vs Target</th>
+                <th style="text-align:center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="month-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Booking Pipeline Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Upcoming Bookings
+          </span>
+          <span class="chip chip-success" id="booking-count-chip"></span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="booking-table-wrap">
+          <table class="booking-table">
+            <thead>
+              <tr>
+                <th>Guest</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th style="text-align:right">Nights</th>
+                <th style="text-align:right">Payout</th>
+                <th style="text-align:center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="booking-tbody"></tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Pricing Calendar -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            2026 Event Pricing Calendar
+          </span>
+          <span class="chip chip-muted">Click to mark done</span>
+        </div>
+        <div id="event-impact"></div>
+        <div id="event-upcoming" class="event-list"></div>
+        <div id="event-past-toggle"></div>
+        <div id="event-past" class="event-list"></div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+
+      <!-- Revenue Pipeline -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Revenue Pipeline
+          </span>
+        </div>
+        <div id="pipeline-boxes"></div>
+        <div id="pipeline-alert-area"></div>
+      </div>
+
+      <!-- Market Intelligence -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Market Intelligence
+          </span>
+          <span class="chip chip-muted">PriceLabs</span>
+        </div>
+        <div class="card-body" id="market-card"></div>
+        <div class="card-body" id="market-simulator"></div>
+        <div class="card-body">
+          <div class="seasonal-chart-wrap">
+            <h4>12-Month ADR Trend</h4>
+            <div class="seasonal-chart-container">
+              <canvas id="seasonalChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Checklist -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Action Center
+          </span>
+        </div>
+        <div id="action-progress"></div>
+        <div id="action-tabs"></div>
+        <div class="action-list" id="action-list"></div>
+        <div class="add-action-row">
+          <button class="add-action-btn" onclick="showAddAction()" title="Add action">+</button>
+          <div class="add-action-form" id="add-action-form">
+            <input type="text" class="add-action-input" id="add-action-text" placeholder="New action item..." aria-label="New action item">
+            <select class="add-action-select" id="add-action-priority" aria-label="Priority level">
+              <option value="1">P1</option>
+              <option value="2" selected>P2</option>
+              <option value="3">P3</option>
+            </select>
+            <button class="add-action-submit" onclick="submitAddAction()">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Superhost -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Superhost Status
+          </span>
+          <span class="chip chip-success">All criteria met</span>
+        </div>
+        <div class="card-body">
+          <div class="host-stat-row">
+            <div class="host-stat"><div class="hs-val">5.0</div><div class="hs-label">Rating</div></div>
+            <div class="host-stat"><div class="hs-val">100%</div><div class="hs-label">Response</div></div>
+            <div class="host-stat"><div class="hs-val">26</div><div class="hs-label">Stays</div></div>
+            <div class="host-stat"><div class="hs-val">0%</div><div class="hs-label">Cancel</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Review Breakdown
+          </span>
+          <span class="chip chip-success">22 reviews</span>
+        </div>
+        <div class="card-body">
+          <div class="ratings-grid">
+            <div class="rating-box"><div class="r-label">Cleanliness</div><div class="r-val">5.0</div><div class="r-bar"><div class="r-fill" style="width:100%"></div></div></div>
+            <div class="rating-box"><div class="r-label">Accuracy</div><div class="r-val">5.0</div><div class="r-bar"><div class="r-fill" style="width:100%"></div></div></div>
+            <div class="rating-box"><div class="r-label">Check-in</div><div class="r-val">4.97</div><div class="r-bar"><div class="r-fill" style="width:99.4%"></div></div></div>
+            <div class="rating-box"><div class="r-label">Communication</div><div class="r-val">4.97</div><div class="r-bar"><div class="r-fill" style="width:99.4%"></div></div></div>
+            <div class="rating-box"><div class="r-label">Value</div><div class="r-val">4.97</div><div class="r-bar"><div class="r-fill" style="width:99.4%"></div></div></div>
+            <div class="rating-box"><div class="r-label">Location</div><div class="r-val">4.82</div><div class="r-bar"><div class="r-fill" style="width:96.4%"></div></div></div>
+          </div>
+          <p class="card-note">Location 4.82 is expected for a basement — strong neighborhood copy helps.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Guest Toolkit ──────────────────────────────────────── -->
+  <div class="toolkit-section">
+    <span class="badge">Guest</span>
+    <h2 class="page-title" style="font-size:22px; margin-top:10px;">Guest Message Toolkit</h2>
+    <p class="page-subtitle">Copy-paste templates for every stage of the guest journey.</p>
+
+    <div class="card">
+      <div class="msg-tabs" id="msg-tabs"></div>
+      <div id="msg-content"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="house-rules-toggle" onclick="toggleHouseRules()">
+        <span class="toggle-arrow" id="rules-arrow">▼</span>
+        <span class="house-rules-title">House Rules Quick Reference</span>
+      </div>
+      <div class="house-rules-body" id="house-rules-body"></div>
+    </div>
+  </div>
+
+  <!-- ── Monthly Report ────────────────────────────────────── -->
+  <div class="report-section">
+    <span class="badge">Report</span>
+    <h2 class="page-title" style="font-size:22px; margin-top:10px;">Monthly Report</h2>
+    <p class="page-subtitle">Auto-generated snapshot from your dashboard data.</p>
+
+    <div class="month-pills" id="report-month-pills"></div>
+
+    <div class="card">
+      <div class="card-body" id="report-content"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <img src="Logo/1346_logo-white.svg" alt="Thirteen4Six" class="footer-logo">
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════════
+     DATA BLOCK
+     All dashboard data lives here. To update monthly:
+     1. Go to Airbnb → Earnings → Transaction History
+     2. Export CSV for the month, note the totals
+     3. Update the relevant month object below
+     4. Save and refresh the page
+     ══════════════════════════════════════════════════════════════ -->
+<script id="dashboard-data">
+// ── PASSWORD ────────────────────────────────────────────────
+// Change this to your desired password.
+// For production, consider a hash-based approach.
+const GATE_PASSWORD = "thirteen4six";
+
+// ── MONTHLY REVENUE DATA ────────────────────────────────────
+// Source: Airbnb Earnings → Transaction History → Monthly totals
+// paid = money already received, upcoming = confirmed future bookings
+// target = $3,800/month goal
+const MONTHLY_DATA = [
+  { month: "Jan",  paid: 262,   upcoming: 0,       total: 262,     target: 3800 },   // Actual — Airbnb income Jan 2026
+  { month: "Feb",  paid: 301,   upcoming: 0,       total: 301,     target: 3800 },   // Actual — Airbnb income Feb 2026
+  { month: "Mar",  paid: 1856,  upcoming: 0,       total: 1856,    target: 3800 },   // Actual — Airbnb income Mar 2026 (net)
+  { month: "Apr",  paid: 0,     upcoming: 2907.59, total: 2907.59, target: 3800 },   // Projected — 4 confirmed bookings
+  { month: "May",  paid: 0,     upcoming: 1333,    total: 1333,    target: 3800 },   // Projected — confirmed bookings only
+  { month: "Jun",  paid: 0,     upcoming: 324,     total: 324,     target: 3800 },   // Projected — 1 confirmed booking
+  { month: "Jul",  paid: 0,     upcoming: 340,     total: 340,     target: 3800 },   // Projected — 1 confirmed booking (July 4th)
+  { month: "Aug",  paid: 0,     upcoming: 0,       total: 0,       target: 3800 },
+  { month: "Sep",  paid: 0,     upcoming: 0,       total: 0,       target: 3800 },
+  { month: "Oct",  paid: 0,     upcoming: 0,       total: 0,       target: 3800 },
+  { month: "Nov",  paid: 0,     upcoming: 0,       total: 0,       target: 3800 },
+  { month: "Dec",  paid: 0,     upcoming: 0,       total: 0,       target: 3800 },
+];
+
+// ── MONTHLY DETAIL DATA ────────────────────────────────────
+// Granular per-month metrics for the report section.
+// Add a row for each month once you have actuals.
+const MONTHLY_DETAILS = {
+  Jan: { adr: 131,  occupancy: 0.07, bookings: 1, reviewsAdded: 0, rating: 5.0, totalReviews: 20 },
+  Feb: { adr: 150,  occupancy: 0.07, bookings: 1, reviewsAdded: 0, rating: 5.0, totalReviews: 20 },
+  Mar: { adr: 155,  occupancy: 0.39, bookings: 4, reviewsAdded: 2, rating: 5.0, totalReviews: 22 },
+};
+
+// ── SCORE CARD DATA ─────────────────────────────────────────
+// Update these each month with the latest numbers
+const SCORE_CARDS = [
+  {
+    badge: "Revenue",
+    value: "$1,856",
+    sub: "March 2026 · net actual",
+    delta: "Target: $3,800",
+    status: "warn",       // ok | warn | bad
+  },
+  {
+    badge: "Avg Nightly Rate",
+    value: "$155",
+    sub: "PriceLabs base price",
+    delta: "Target: $170+",
+    status: "warn",
+  },
+  {
+    badge: "Occupancy",
+    value: "80%",
+    sub: "Next 30 days · PriceLabs",
+    delta: "Target: 75%+ ✓",
+    status: "ok",
+  },
+  {
+    badge: "Rating",
+    value: "5.0★",
+    sub: "22 reviews · Superhost",
+    delta: "Guest Favorite ✓",
+    status: "ok",
+  },
+];
+
+// ── MARKET DATA ─────────────────────────────────────────────
+// Source: PriceLabs Revenue Estimator Pro (April 2, 2026)
+// Based on 372 active 1BR Airbnb listings near 1346 Oak St NW
+const MARKET_DATA = {
+  source: "PriceLabs Revenue Estimator Pro",
+  date: "April 2, 2026",
+  annualRevenue: { p50: 22300, p25: 14000, p75: 30000 },
+  monthlyRevenue: 1862,   // 50th percentile
+  yourMonthly: 1856,      // Your March actual
+  adr: { market: 100, yours: 155 },
+  occupancy: { market: 0.68, yours: 0.80 },
+  activeListings: 372,
+  // Previous month for trend arrows (Feb → Mar changes)
+  previousMonth: {
+    adr: { market: 90, yours: 130 },
+    occupancy: { market: 0.34, yours: 0.45 },
+    monthlyRevenue: 1650,
+    yourMonthly: 301,
+  },
+  // Revenue targets from playbook
+  targets: {
+    monthlyTarget: 3800,    // After optimization target
+    adrTarget: 170,          // Target nightly rate
+    occupancyTarget: 0.75,   // Target occupancy
+    annualTarget: 45000,     // Annual run rate target
+  },
+};
+
+// ── SEASONAL ADR DATA ───────────────────────────────────────
+// Source: dc_airbnb_playbook.md seasonal pricing tiers (midpoint of ranges)
+// Market estimates from PriceLabs 1BR median seasonality
+const SEASONAL_ADR = [
+  { month: "Jan", market: 85,  yours: 120 },
+  { month: "Feb", market: 90,  yours: 130 },
+  { month: "Mar", market: 110, yours: 155 },
+  { month: "Apr", market: 130, yours: 165 },
+  { month: "May", market: 140, yours: 175 },
+  { month: "Jun", market: 145, yours: 180 },
+  { month: "Jul", market: 155, yours: 210 },
+  { month: "Aug", market: 120, yours: 153 },
+  { month: "Sep", market: 115, yours: 148 },
+  { month: "Oct", market: 112, yours: 145 },
+  { month: "Nov", market: 100, yours: 130 },
+  { month: "Dec", market: 105, yours: 138 },
+];
+
+// ── EVENT CALENDAR ──────────────────────────────────────────
+// Source: dc_airbnb_playbook.md
+// Urgency is now calculated dynamically from dates + override status.
+// bookedPrice: if the event dates overlap a confirmed booking at a rate below target, enter the nightly rate here.
+// targetPrice: { min, max } target nightly rate from playbook.
+// setByDate: deadline to configure PriceLabs override (ISO date).
+const EVENTS = [
+  { name: "🌸 Cherry Blossom Festival",    startDate: "2026-04-01", endDate: "2026-04-12", targetPrice: { min: 250, max: 270 }, overrideSet: true,  overridePrice: 255, bookedPrice: null, category: "festival",  setByDate: "2026-03-15", note: "Peak window — prices set via PriceLabs" },
+  { name: "🇺🇸 Memorial Day Weekend",        startDate: "2026-05-23", endDate: "2026-05-25", targetPrice: { min: 280, max: 300 }, overrideSet: false, overridePrice: null, bookedPrice: 150, category: "holiday",   setByDate: "2026-04-15", note: "Already booked at $150 — note for next year" },
+  { name: "🏳️‍🌈 Capital Pride",                startDate: "2026-06-12", endDate: "2026-06-21", targetPrice: { min: 250, max: 280 }, overrideSet: true,  overridePrice: 265, bookedPrice: 142, category: "festival",  setByDate: "2026-05-01", note: "Override set at $265 — some dates booked at $142" },
+  { name: "🎆 July 4th — America's 250th", startDate: "2026-07-01", endDate: "2026-07-06", targetPrice: { min: 320, max: 335 }, overrideSet: false, overridePrice: null, bookedPrice: 150, category: "holiday",   setByDate: "2026-05-15", note: "Jul 3–5 booked at $150 — set remaining July NOW" },
+  { name: "🎸 Noah Kahan — Nationals Park", startDate: "2026-07-22", endDate: "2026-07-22", targetPrice: { min: 220, max: 240 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "concert",   setByDate: "2026-06-15", note: "Set by Jun 15" },
+  { name: "🎸 Foo Fighters + MCR",          startDate: "2026-08-17", endDate: "2026-08-18", targetPrice: { min: 220, max: 240 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "concert",   setByDate: "2026-07-01", note: "Set by Jul 1" },
+  { name: "🎷 DC JazzFest — The Wharf",     startDate: "2026-09-05", endDate: "2026-09-06", targetPrice: { min: 210, max: 240 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "festival",  setByDate: "2026-08-01", note: "Set by Aug 1" },
+  { name: "🍂 Columbus Day Weekend",        startDate: "2026-10-10", endDate: "2026-10-12", targetPrice: { min: 200, max: 220 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "holiday",   setByDate: "2026-09-01", note: "Set by Sep 1" },
+  { name: "🦃 Thanksgiving Weekend",        startDate: "2026-11-26", endDate: "2026-11-29", targetPrice: { min: 185, max: 200 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "holiday",   setByDate: "2026-10-15", note: "Set by Oct 15" },
+  { name: "🎄 Holiday / New Year's",        startDate: "2026-12-26", endDate: "2026-12-31", targetPrice: { min: 190, max: 210 }, overrideSet: false, overridePrice: null, bookedPrice: null, category: "holiday",   setByDate: "2026-11-15", note: "Set by Nov 15" },
+];
+
+// ── ACTION CHECKLIST ────────────────────────────────────────
+// Source: dc_airbnb_playbook.md + pricelabs_setup_and_insights.html
+// group: "priority" (original 9), "phase1" (playbook weeks 1–2), "phase2" (playbook weeks 3–6)
+// done: true = pre-completed from playbook (✅ items). false = still todo.
+// dueDate: optional ISO date for deadline tracking.
+const ACTIONS = [
+  // ── Priority Actions ──
+  { text: "Set July 4th remaining dates to $325/night + 3-night min", note: "Airbnb → Calendar → Jul 1–6", priority: 1, group: "priority", dueDate: "2026-04-05", done: false },
+  { text: "Raise May & June open nights to $160–280/night", note: "PriceLabs or Airbnb Calendar", priority: 1, group: "priority", dueDate: "2026-04-10", done: false },
+  { text: "Book professional photographer", note: "$150–250 · capture private entrance + workspace", priority: 2, group: "priority", dueDate: "2026-04-15", done: false },
+  { text: "Enable Instant Book (2-night min)", note: "Airbnb → Listing → Booking settings", priority: 2, group: "priority", dueDate: null, done: false },
+  { text: "Set up 5 automated guest messages", note: "Airbnb → Messaging → Scheduled messages", priority: 2, group: "priority", dueDate: null, done: false },
+  { text: "Set 7-night discount to 20%", note: "Airbnb → Listing → Pricing → Weekly discount", priority: 2, group: "priority", dueDate: null, done: false },
+  { text: "Set 28-night discount to 35%", note: "Airbnb → Listing → Pricing → Monthly discount", priority: 3, group: "priority", dueDate: null, done: false },
+  { text: "Configure PriceLabs last-minute & far-out rules", note: "PriceLabs → Customizations → Advanced", priority: 3, group: "priority", dueDate: null, done: false },
+  { text: "Cross-list on VRBO", note: "Different audience, zero extra cost", priority: 3, group: "priority", dueDate: null, done: false },
+  // ── Playbook — Phase 1 (Weeks 1–2) ──
+  { text: "Update July 4th pricing to $320–335/night + 3-night min", note: "PriceLabs override set at $325 (Jul 1–6)", priority: 1, group: "phase1", dueDate: null, done: true },
+  { text: "Update Cherry Blossom/April pricing to $250–270", note: "PriceLabs seasonal profile active", priority: 1, group: "phase1", dueDate: null, done: true },
+  { text: "Sign up for PriceLabs and connect to Airbnb", note: "Connected, 29-day free trial active", priority: 1, group: "phase1", dueDate: null, done: true },
+  { text: "Set PriceLabs base price ($155, min $120, max $400)", note: "PriceLabs → Pricing → Base price", priority: 1, group: "phase1", dueDate: null, done: true },
+  { text: "Write new listing title", note: "Private DC Suite · Free Parking · 9 Min to Metro", priority: 2, group: "phase1", dueDate: null, done: true },
+  { text: "Rewrite full listing description", note: "Updated on Airbnb — Opening Hook, The Space, Neighborhood", priority: 2, group: "phase1", dueDate: null, done: true },
+  { text: "Configure PriceLabs seasonal adjustments", note: "Seasonal profiles + date overrides active", priority: 2, group: "phase1", dueDate: null, done: true },
+  { text: "Upload professional photos", note: "Schedule after photographer booked", priority: 2, group: "phase1", dueDate: "2026-04-20", done: false },
+  { text: "Add extended stay & monthly stay keywords to listing", note: "Airbnb → Listing → Description", priority: 3, group: "phase1", dueDate: null, done: false },
+  // ── Playbook — Phase 2 (Weeks 3–6) ──
+  { text: "Respond to every inquiry within 1 hour", note: "Set phone notifications for Airbnb app", priority: 1, group: "phase2", dueDate: null, done: false },
+  { text: "Respond to every review", note: "Even short acknowledgments help ranking", priority: 2, group: "phase2", dueDate: null, done: false },
+  { text: "Send mid-stay message to every guest", note: "Ask if they need anything — builds review scores", priority: 2, group: "phase2", dueDate: null, done: false },
+  { text: "A/B test listing title after first 5 guests", note: "Two variations, 2 weeks each", priority: 2, group: "phase2", dueDate: "2026-05-15", done: false },
+  { text: "Add local guidebook to listing", note: "Restaurants, bars, subway tips near you", priority: 3, group: "phase2", dueDate: null, done: false },
+  { text: "Create physical welcome guide in unit", note: "Print and laminate for guests", priority: 3, group: "phase2", dueDate: null, done: false },
+  { text: "Place small welcome basket ($10–15)", note: "Adds to review scores", priority: 3, group: "phase2", dueDate: null, done: false },
+  { text: "Verify all amenity tags checked", note: "Kitchen, laundry, workspace, private entrance, WiFi, streaming", priority: 3, group: "phase2", dueDate: null, done: false },
+];
+
+// ── BOOKINGS PIPELINE ──────────────────────────────────────
+// Source: Docs/airbnb_pending (1).csv — Airbnb Transaction History export
+// Contains all confirmed reservations. Update by adding new rows from CSV.
+// payout = net to host (Amount column), grossEarnings = Gross earnings column
+const BOOKINGS = [
+  { guest: "Guest 1", checkIn: "2026-04-02", checkOut: "2026-04-04", nights: 2,  payout: 320.10,  grossEarnings: 330.00,  cleaningFee: 65,  status: "confirmed", bookedOn: "2026-03-30" },
+  { guest: "Guest 2", checkIn: "2026-04-10", checkOut: "2026-04-13", nights: 3,  payout: 484.86,  grossEarnings: 499.86,  cleaningFee: 75,  status: "confirmed", bookedOn: "2026-01-01" },
+  { guest: "Guest 3", checkIn: "2026-04-17", checkOut: "2026-04-19", nights: 2,  payout: 335.91,  grossEarnings: 346.30,  cleaningFee: 65,  status: "confirmed", bookedOn: "2026-03-15" },
+  { guest: "Guest 4", checkIn: "2026-04-23", checkOut: "2026-05-05", nights: 12, payout: 1766.72, grossEarnings: 1821.36, cleaningFee: 75,  status: "confirmed", bookedOn: "2026-01-28" },  // Spans Apr–May
+  { guest: "Guest 5", checkIn: "2026-05-13", checkOut: "2026-05-16", nights: 3,  payout: 487.69,  grossEarnings: 502.77,  cleaningFee: 75,  status: "confirmed", bookedOn: "2026-02-02" },
+  { guest: "Guest 6", checkIn: "2026-05-22", checkOut: "2026-05-24", nights: 2,  payout: 354.73,  grossEarnings: 365.70,  cleaningFee: 65,  status: "confirmed", bookedOn: "2026-03-27" },
+  { guest: "Guest 7", checkIn: "2026-05-28", checkOut: "2026-05-31", nights: 3,  payout: 490.30,  grossEarnings: 505.46,  cleaningFee: 100, status: "confirmed", bookedOn: "2026-03-31" },
+  { guest: "Guest 8", checkIn: "2026-06-13", checkOut: "2026-06-15", nights: 2,  payout: 324.18,  grossEarnings: 334.21,  cleaningFee: 50,  status: "confirmed", bookedOn: "2026-03-01" },
+  { guest: "Guest 9", checkIn: "2026-07-03", checkOut: "2026-07-05", nights: 2,  payout: 340.18,  grossEarnings: 350.70,  cleaningFee: 50,  status: "confirmed", bookedOn: "2026-02-14" },
+];
+
+// ── GUEST TOOLKIT ──────────────────────────────────────────
+// Source: dc_airbnb_playbook.md → Guest Experience & Automation
+// Editable defaults — update these when property details change.
+const GUEST_CONFIG = {
+  property: "Private DC Suite · Free Parking · 9 Min to Metro",
+  checkInTime: "3:00 PM",
+  checkoutTime: "11:00 AM",
+  wifiPassword: "[from Welcome Doc]",
+  keyInstructions: "[from Welcome Doc]",
+  parkingInfo: "Free street parking with zone permit included",
+};
+
+// Message templates from playbook. Use {placeholder} for dynamic values.
+// {guest_name} and {dates} are guest-specific (entered per-message).
+// Other placeholders auto-fill from GUEST_CONFIG.
+const MESSAGE_TEMPLATES = [
+  {
+    tab: "Booking Confirmation",
+    timing: "Send immediately after booking",
+    template: "Hi {guest_name}! So excited to host you. Your reservation at {property} is confirmed for {dates}. I'll send check-in details 3 days before arrival. In the meantime, feel free to ask me anything. Can't wait to have you!"
+  },
+  {
+    tab: "Pre-Arrival",
+    timing: "Send 3 days before check-in",
+    template: "Hi {guest_name}! Getting excited for your arrival on {dates}. Here's what you need to know:\n\nCheck-in: {checkInTime}\nParking: {parkingInfo}\nWiFi: {wifiPassword}\n\nFull instructions will also be in the Airbnb app. Let me know if you have any questions!"
+  },
+  {
+    tab: "Check-In",
+    timing: "Send 1 hour after check-in time",
+    template: "Hi {guest_name}! Hope you arrived safely and are settling in. The WiFi password is {wifiPassword}, and the TV remote is on the coffee table. Let me know if anything is unclear — I'm just a message away!"
+  },
+  {
+    tab: "Mid-Stay",
+    timing: "Send on day 2 of stay",
+    template: "Hi {guest_name}! Just checking in — hope everything is going well! Is there anything you need or anything I can make more comfortable? Happy to help. Enjoy DC!"
+  },
+  {
+    tab: "Checkout & Review",
+    timing: "Send morning of checkout",
+    template: "Hi {guest_name}! Today's your last day — hope you had a wonderful stay! Checkout is by {checkoutTime}. Please leave the key {keyInstructions}. If you enjoyed your stay, a review would mean the world to me — it helps future guests find the listing. Safe travels, and I hope to host you again!"
+  },
+];
+
+// House rules from playbook Welcome Doc
+const HOUSE_RULES = [
+  { rule: "Check-in 3:00 PM / Checkout 11:00 AM", icon: "🕒" },
+  { rule: "Shoe-free home", icon: "👟" },
+  { rule: "No smoking — $200/day fee", icon: "🚭" },
+  { rule: "No parties or events", icon: "🚫" },
+  { rule: "No pets — $200 fee", icon: "🐾" },
+  { rule: "Registered guests only", icon: "👤" },
+  { rule: "Quiet hours 10 PM – 7 AM", icon: "🤫" },
+  { rule: "No eating or drinking in bedroom", icon: "🍽️" },
+  { rule: "No candles or incense", icon: "🕯️" },
+  { rule: "Early check-in / late checkout: $25–40", icon: "💰" },
+];
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     APP LOGIC
+     ══════════════════════════════════════════════════════════════ -->
+<script>
+// ── Password Gate ────────────────────────────────────────────
+function checkPassword() {
+  const input = document.getElementById('gate-pw').value;
+  if (input === GATE_PASSWORD) {
+    document.getElementById('password-gate').classList.add('hidden');
+    sessionStorage.setItem('cc_auth', 'true');
+    return false;
+  }
+  document.getElementById('gate-error').textContent = 'Incorrect password';
+  document.getElementById('gate-pw').value = '';
+  document.getElementById('gate-pw').focus();
+  return false;
+}
+
+// Auto-skip gate if already authenticated this session
+if (sessionStorage.getItem('cc_auth') === 'true') {
+  document.getElementById('password-gate').classList.add('hidden');
+}
+
+// ── Date ────────────────────────────────────────────────────
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US', {
+  weekday: 'short', month: 'long', day: 'numeric', year: 'numeric'
+});
+
+// ── Score Cards ─────────────────────────────────────────────
+(function renderScoreCards() {
+  const container = document.getElementById('score-cards');
+  container.innerHTML = SCORE_CARDS.map(card => `
+    <div class="score-card ${card.status}">
+      <div class="sc-badge">${card.badge}</div>
+      <div class="sc-value">${card.value}</div>
+      <div class="sc-sub">${card.sub}</div>
+      <div class="sc-delta ${card.status}">${card.delta}</div>
+    </div>
+  `).join('');
+})();
+
+// ── Revenue Chart ───────────────────────────────────────────
+(function renderChart() {
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  const labels = MONTHLY_DATA.map(d => d.month);
+  const values = MONTHLY_DATA.map(d => d.total);
+
+  // Months with actual paid data vs projected
+  const isActual = MONTHLY_DATA.map(d => d.paid > 0);
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Revenue',
+          data: values,
+          backgroundColor: MONTHLY_DATA.map((d, i) => {
+            if (d.total === 0) return '#E8E0D0';           // No data — light gray
+            if (d.paid > 0) return '#0A3191';               // Actual — brand blue
+            return 'rgba(10,49,145,0.35)';                  // Projected — light blue
+          }),
+          borderRadius: 6,
+          borderSkipped: false,
+          barPercentage: 0.6,
+        },
+        {
+          label: 'Target',
+          data: Array(12).fill(3800),
+          type: 'line',
+          borderColor: '#C87D14',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => c.dataset.label === 'Target' ? ' Target: $3,800' : ' $' + c.parsed.y.toLocaleString()
+          },
+          backgroundColor: '#071E5E',
+          titleFont: { family: 'DM Sans, sans-serif', size: 12 },
+          bodyFont:  { family: 'DM Sans, sans-serif', size: 13 },
+          padding: 10,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 5000,
+          ticks: {
+            callback: (v) => '$' + (v >= 1000 ? (v/1000).toFixed(1) + 'k' : v),
+            font: { size: 11, family: 'DM Sans, sans-serif' },
+            color: '#4A5A7A',
+          },
+          grid: { color: '#E8E0D0' },
+          border: { display: false }
+        },
+        x: {
+          grid: { display: false },
+          border: { display: false },
+          ticks: {
+            font: { size: 12, family: 'DM Sans, sans-serif', weight: 500 },
+            color: '#0A3191'
+          }
+        }
+      }
+    }
+  });
+})();
+
+// ── Month-over-Month Table ──────────────────────────────────
+(function renderMonthTable() {
+  const tbody = document.getElementById('month-tbody');
+  const rows = MONTHLY_DATA.filter(d => d.total > 0 || d.paid > 0);
+  tbody.innerHTML = rows.map(d => {
+    const gap = d.total - d.target;
+    const pct = ((d.total / d.target) * 100).toFixed(0);
+    let statusClass, statusText;
+    if (pct >= 100) { statusClass = 'status-ok'; statusText = '✓ On track'; }
+    else if (pct >= 60) { statusClass = 'status-warn'; statusText = pct + '%'; }
+    else { statusClass = 'status-bad'; statusText = pct + '%'; }
+    const isFuture = d.paid === 0 && d.upcoming > 0;
+    return `<tr class="${isFuture ? 'future' : ''}">
+      <td class="month-label">${d.month} 2026</td>
+      <td class="num">${d.paid > 0 ? '$' + d.paid.toLocaleString() : '—'}</td>
+      <td class="num">${d.upcoming > 0 ? '$' + d.upcoming.toLocaleString() : '—'}</td>
+      <td class="num" style="font-weight:700">$${d.total.toLocaleString()}</td>
+      <td class="num ${statusClass}">${gap >= 0 ? '+' : ''}$${gap.toLocaleString()}</td>
+      <td style="text-align:center" class="${statusClass}">${statusText}</td>
+    </tr>`;
+  }).join('');
+
+  // YTD summary row
+  const ytdPaid = MONTHLY_DATA.reduce((s, d) => s + d.paid, 0);
+  const ytdUpcoming = MONTHLY_DATA.reduce((s, d) => s + d.upcoming, 0);
+  const ytdTotal = ytdPaid + ytdUpcoming;
+  tbody.innerHTML += `<tr style="border-top:2px solid var(--brand-blue); font-weight:700;">
+    <td class="month-label">YTD Total</td>
+    <td class="num">$${ytdPaid.toLocaleString()}</td>
+    <td class="num">$${ytdUpcoming.toLocaleString()}</td>
+    <td class="num" style="color:var(--brand-blue)">$${ytdTotal.toLocaleString()}</td>
+    <td class="num" style="color:var(--text-secondary)">of $${(3800*12).toLocaleString()}</td>
+    <td style="text-align:center;color:var(--text-secondary)">${((ytdTotal / (3800*12)) * 100).toFixed(1)}%</td>
+  </tr>`;
+})();
+
+// ── Market Position Card ────────────────────────────────────
+// ── Trend arrow helper ─────────────────────────────────────
+function trendArrow(current, previous, higherIsGood) {
+  if (previous === undefined || previous === null) return '';
+  if (current === previous) return '<span class="trend-arrow trend-flat">—</span>';
+  const up = current > previous;
+  const favorable = higherIsGood ? up : !up;
+  const cls = up
+    ? (favorable ? 'trend-up-good' : 'trend-up-bad')
+    : (favorable ? 'trend-down-good' : 'trend-down-bad');
+  const arrow = up ? '↑' : '↓';
+  const delta = up ? current - previous : previous - current;
+  const pct = ((delta / previous) * 100).toFixed(0);
+  return `<span class="trend-arrow ${cls}" title="${arrow} ${pct}% vs last month">${arrow}</span>`;
+}
+
+(function renderMarketCard() {
+  const m = MARKET_DATA;
+  const prev = m.previousMonth;
+  const container = document.getElementById('market-card');
+
+  // Calculate position on range bar (0-100%)
+  const rangeMin = m.annualRevenue.p25;
+  const rangeMax = m.annualRevenue.p75;
+  const yourAnnual = m.yourMonthly * 12;
+  const positionPct = Math.min(100, Math.max(0, ((yourAnnual - rangeMin) / (rangeMax - rangeMin)) * 100));
+
+  // Percentile calculation: linear interpolation within p25-p75 range
+  let percentile;
+  if (yourAnnual <= rangeMin) percentile = 75 + ((rangeMin - yourAnnual) / rangeMin) * 25;
+  else if (yourAnnual >= rangeMax) percentile = 25 - ((yourAnnual - rangeMax) / rangeMax) * 25;
+  else percentile = 75 - ((yourAnnual - rangeMin) / (rangeMax - rangeMin)) * 50;
+  percentile = Math.max(1, Math.min(99, Math.round(percentile)));
+
+  const pctClass = percentile <= 25 ? 'pct-success' : percentile <= 50 ? 'pct-warning' : 'pct-danger';
+
+  container.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:16px;">
+      <div class="percentile-badge ${pctClass}">
+        <span class="pct-rank">TOP ${percentile}%</span>
+        <span class="pct-sub">of ${m.activeListings} listings</span>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">Annual Revenue Position</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--brand-blue);">$${yourAnnual.toLocaleString()}</span>
+          <span style="font-size:13px;color:var(--text-secondary);">/ year (est.)</span>
+        </div>
+      </div>
+    </div>
+    <div class="position-bar" style="margin-bottom:16px;">
+      <div class="position-range" style="left:0%;width:100%"></div>
+      <div class="position-marker" style="left:${positionPct}%;">
+        <div class="position-marker-label">You</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:16px;">
+      <span>25th: $${(rangeMin/1000).toFixed(0)}K</span>
+      <span>50th: $${(m.annualRevenue.p50/1000).toFixed(0)}K</span>
+      <span>75th: $${(rangeMax/1000).toFixed(0)}K</span>
+    </div>
+
+    <div class="market-stat">
+      <div class="market-label">Avg Nightly Rate</div>
+      <div class="market-values">
+        <span class="market-you">$${m.adr.yours}${trendArrow(m.adr.yours, prev.adr.yours, true)}</span>
+        <span class="market-median">vs $${m.adr.market} median${trendArrow(m.adr.market, prev.adr.market, false)}</span>
+      </div>
+    </div>
+    <div class="market-stat">
+      <div class="market-label">Occupancy (30-day)</div>
+      <div class="market-values">
+        <span class="market-you">${(m.occupancy.yours * 100).toFixed(0)}%${trendArrow(m.occupancy.yours, prev.occupancy.yours, true)}</span>
+        <span class="market-median">vs ${(m.occupancy.market * 100).toFixed(0)}% median${trendArrow(m.occupancy.market, prev.occupancy.market, false)}</span>
+      </div>
+    </div>
+    <div class="market-stat">
+      <div class="market-label">Monthly Revenue</div>
+      <div class="market-values">
+        <span class="market-you">$${m.yourMonthly.toLocaleString()}${trendArrow(m.yourMonthly, prev.yourMonthly, true)}</span>
+        <span class="market-median">vs $${m.monthlyRevenue.toLocaleString()} median${trendArrow(m.monthlyRevenue, prev.monthlyRevenue, false)}</span>
+      </div>
+    </div>
+    <div class="market-stat">
+      <div class="market-label">Active Listings</div>
+      <div class="market-values">
+        <span class="market-you">${m.activeListings}</span>
+        <span class="market-median">1BR near you</span>
+      </div>
+    </div>
+    <p class="card-note">${m.source} · ${m.date}</p>
+  `;
+})();
+
+// ── Revenue Simulator ──────────────────────────────────────
+(function renderSimulator() {
+  const t = MARKET_DATA.targets;
+  const simContainer = document.getElementById('market-simulator');
+
+  // Target marker positions (as % of slider range)
+  const adrTargetPct = ((t.adrTarget - 100) / (300 - 100)) * 100;
+  const occTargetPct = ((t.occupancyTarget * 100 - 40) / (100 - 40)) * 100;
+
+  simContainer.innerHTML = `
+    <div class="sim-card">
+      <h4>Revenue Simulator</h4>
+      <div class="sim-row">
+        <span class="sim-label">If your ADR is:</span>
+        <div class="sim-slider-wrap">
+          <div class="sim-target-mark" style="left:${adrTargetPct}%;">
+            <span class="sim-target-label">$${t.adrTarget}</span>
+          </div>
+          <input type="range" class="sim-slider" id="sim-adr" min="100" max="300" value="${MARKET_DATA.adr.yours}" step="5" oninput="updateSimulator()" aria-label="ADR slider">
+        </div>
+        <span class="sim-value" id="sim-adr-val">$${MARKET_DATA.adr.yours}</span>
+      </div>
+      <div class="sim-row">
+        <span class="sim-label">And occupancy is:</span>
+        <div class="sim-slider-wrap">
+          <div class="sim-target-mark" style="left:${occTargetPct}%;">
+            <span class="sim-target-label">${(t.occupancyTarget * 100).toFixed(0)}%</span>
+          </div>
+          <input type="range" class="sim-slider" id="sim-occ" min="40" max="100" value="${(MARKET_DATA.occupancy.yours * 100).toFixed(0)}" step="1" oninput="updateSimulator()" aria-label="Occupancy slider">
+        </div>
+        <span class="sim-value" id="sim-occ-val">${(MARKET_DATA.occupancy.yours * 100).toFixed(0)}%</span>
+      </div>
+      <div class="sim-results" id="sim-results"></div>
+    </div>
+  `;
+  updateSimulator();
+})();
+
+function updateSimulator() {
+  const adr = parseInt(document.getElementById('sim-adr').value);
+  const occ = parseInt(document.getElementById('sim-occ').value) / 100;
+  const monthly = Math.round(adr * 30 * occ);
+  const annual = monthly * 12;
+  const target = MARKET_DATA.targets.monthlyTarget;
+  const diff = monthly - target;
+  const pct = ((monthly / target) * 100).toFixed(0);
+
+  document.getElementById('sim-adr-val').textContent = '$' + adr;
+  document.getElementById('sim-occ-val').textContent = Math.round(occ * 100) + '%';
+
+  let vsClass = 'status-success';
+  if (diff < 0 && pct >= 80) vsClass = 'status-warning';
+  else if (diff < 0) vsClass = 'status-danger';
+
+  const sign = diff >= 0 ? '+' : '';
+  document.getElementById('sim-results').innerHTML = `
+    <div class="sim-result-box">
+      <div class="sim-result-value">$${monthly.toLocaleString()}</div>
+      <div class="sim-result-label">Monthly Revenue</div>
+    </div>
+    <div class="sim-result-box">
+      <div class="sim-result-value">$${annual.toLocaleString()}</div>
+      <div class="sim-result-label">Annual Revenue</div>
+    </div>
+    <div class="sim-result-box sim-vs-target ${vsClass}">
+      <div class="sim-result-value">${sign}$${Math.abs(diff).toLocaleString()}/mo (${pct}%)</div>
+      <div class="sim-result-label">vs $${target.toLocaleString()} Target</div>
+    </div>
+  `;
+}
+
+// ── Seasonal ADR Trend Chart ───────────────────────────────
+(function renderSeasonalChart() {
+  const ctx = document.getElementById('seasonalChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: SEASONAL_ADR.map(d => d.month),
+      datasets: [
+        {
+          label: 'Your ADR',
+          data: SEASONAL_ADR.map(d => d.yours),
+          borderColor: '#0A3191',
+          backgroundColor: 'rgba(10,49,145,0.08)',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointBackgroundColor: '#0A3191',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.3,
+        },
+        {
+          label: 'Market Median',
+          data: SEASONAL_ADR.map(d => d.market),
+          borderColor: '#8A8069',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          borderDash: [5, 3],
+          pointRadius: 3,
+          pointBackgroundColor: '#8A8069',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 1.5,
+          fill: false,
+          tension: 0.3,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: {
+            font: { family: 'DM Sans, sans-serif', size: 11 },
+            boxWidth: 12,
+            boxHeight: 2,
+            padding: 16,
+            usePointStyle: false,
+          }
+        },
+        tooltip: {
+          backgroundColor: '#071E5E',
+          titleFont: { family: 'DM Sans, sans-serif', size: 12 },
+          bodyFont: { family: 'DM Sans, sans-serif', size: 13 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: (c) => ' ' + c.dataset.label + ': $' + c.parsed.y
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          min: 60,
+          ticks: {
+            font: { family: 'DM Sans, sans-serif', size: 11 },
+            color: '#8A8069',
+            callback: (v) => '$' + v,
+          },
+          grid: { color: 'rgba(0,0,0,0.04)' },
+        },
+        x: {
+          ticks: {
+            font: { family: 'DM Sans, sans-serif', size: 11 },
+            color: '#8A8069',
+          },
+          grid: { display: false },
+        }
+      },
+      interaction: { intersect: false, mode: 'index' },
+    }
+  });
+})();
+
+// ── Booking Pipeline Table ──────────────────────────────────
+(function renderBookings() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tbody = document.getElementById('booking-tbody');
+  const sorted = [...BOOKINGS].sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn));
+
+  const confirmedCount = sorted.filter(b => b.status === 'confirmed').length;
+  document.getElementById('booking-count-chip').textContent = confirmedCount + ' confirmed';
+
+  tbody.innerHTML = sorted.map(b => {
+    const checkOut = new Date(b.checkOut);
+    const isCompleted = checkOut < today;
+    const isHighlight = b.nights >= 7;
+
+    const statusChip = isCompleted
+      ? '<span class="chip chip-muted">Completed</span>'
+      : '<span class="chip chip-success">Confirmed</span>';
+
+    const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return `<tr class="${isCompleted ? 'completed' : ''} ${isHighlight && !isCompleted ? 'highlight' : ''}">
+      <td class="bk-guest">${b.guest}</td>
+      <td class="bk-dates">${fmtDate(b.checkIn)}</td>
+      <td class="bk-dates">${fmtDate(b.checkOut)}</td>
+      <td class="num">${b.nights}</td>
+      <td class="num">$${b.payout.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td style="text-align:center">${statusChip}</td>
+    </tr>`;
+  }).join('');
+})();
+
+// ── Revenue Pipeline Projections ────────────────────────────
+(function renderPipeline() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const TARGET_MONTHLY = 3800;
+
+  function getWindowRevenue(bookings, startDate, endDate) {
+    let total = 0;
+    let count = 0;
+    bookings.forEach(b => {
+      const ci = new Date(b.checkIn);
+      const co = new Date(b.checkOut);
+      if (ci >= endDate || co <= startDate) return;
+      const overlapStart = ci < startDate ? startDate : ci;
+      const overlapEnd = co > endDate ? endDate : co;
+      const overlapNights = Math.round((overlapEnd - overlapStart) / (1000 * 60 * 60 * 24));
+      if (overlapNights <= 0) return;
+      const fraction = overlapNights / b.nights;
+      total += b.payout * fraction;
+      count++;
+    });
+    return { total, count };
+  }
+
+  function getMonthRevenue(bookings, year, month) {
+    const start = new Date(year, month - 1, 1);
+    const end = new Date(year, month, 1);
+    return getWindowRevenue(bookings, start, end);
+  }
+
+  const windows = [
+    { label: "Next 30 Days", days: 30 },
+    { label: "Next 60 Days", days: 60 },
+    { label: "Next 90 Days", days: 90 },
+  ];
+
+  const container = document.getElementById('pipeline-boxes');
+  container.innerHTML = windows.map(w => {
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + w.days);
+    const { total, count } = getWindowRevenue(BOOKINGS, today, endDate);
+
+    const monthsSpanned = w.days / 30;
+    const target = TARGET_MONTHLY * monthsSpanned;
+    const pct = Math.min(100, (total / target) * 100);
+    const gap = total - target;
+
+    let statusClass;
+    if (pct >= 80) statusClass = 'ok';
+    else if (pct >= 50) statusClass = 'warn';
+    else statusClass = 'bad';
+
+    const fmtEnd = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const fmtToday = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    return `<div class="pipeline-box">
+      <div class="pipeline-header">
+        <span class="pipeline-label">${w.label}</span>
+        <span class="pipeline-range">${fmtToday} – ${fmtEnd}</span>
+      </div>
+      <div class="pipeline-amount">$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+      <div class="pipeline-meta">${count} booking${count !== 1 ? 's' : ''}</div>
+      <div class="pipeline-bar-wrap">
+        <div class="pipeline-bar-fill ${statusClass}" style="width:${pct.toFixed(1)}%"></div>
+      </div>
+      <div class="pipeline-gap">
+        <span>${pct.toFixed(0)}% of target</span>
+        <span style="color:var(--${gap >= 0 ? 'success' : 'danger'})">Gap: ${gap >= 0 ? '+' : ''}$${Math.round(gap).toLocaleString()}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Pipeline Alert: months with <50% booked
+  const alertArea = document.getElementById('pipeline-alert-area');
+  const alerts = [];
+  for (let m = today.getMonth() + 1; m <= 12; m++) {
+    const { total } = getMonthRevenue(BOOKINGS, 2026, m);
+    const pct = (total / TARGET_MONTHLY) * 100;
+    if (pct < 50) {
+      const monthName = new Date(2026, m - 1, 1).toLocaleDateString('en-US', { month: 'long' });
+      const daysInMonth = new Date(2026, m, 0).getDate();
+      let bookedNights = 0;
+      BOOKINGS.forEach(b => {
+        const ci = new Date(b.checkIn);
+        const co = new Date(b.checkOut);
+        const mStart = new Date(2026, m - 1, 1);
+        const mEnd = new Date(2026, m, 1);
+        if (ci >= mEnd || co <= mStart) return;
+        const os = ci < mStart ? mStart : ci;
+        const oe = co > mEnd ? mEnd : co;
+        bookedNights += Math.round((oe - os) / (1000 * 60 * 60 * 24));
+      });
+      const openNights = daysInMonth - bookedNights;
+      if (total > 0) {
+        alerts.push(`<strong>${monthName}</strong> has only $${Math.round(total).toLocaleString()} booked (${pct.toFixed(0)}% of target). ${openNights} nights open.`);
+      } else {
+        alerts.push(`<strong>${monthName}</strong> has no bookings. ${openNights} nights open.`);
+      }
+    }
+  }
+
+  if (alerts.length > 0) {
+    alertArea.innerHTML = alerts.map(a => `
+      <div class="pipeline-alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>${a}</span>
+      </div>
+    `).join('');
+  }
+})();
+
+// ── Booking Pipeline Table (S2) ─────────────────────────────
+(function renderBookings() {
+  const tbody = document.getElementById('booking-tbody');
+  const countChip = document.getElementById('booking-count-chip');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Sort by check-in date
+  const sorted = [...BOOKINGS].sort((a, b) => new Date(a.checkIn) - new Date(b.checkIn));
+
+  // Determine status dynamically
+  const rows = sorted.map(b => {
+    const checkOut = new Date(b.checkOut);
+    const checkIn = new Date(b.checkIn);
+    checkOut.setHours(0,0,0,0);
+    checkIn.setHours(0,0,0,0);
+    let status = b.status;
+    if (checkOut <= today && status === 'confirmed') status = 'completed';
+
+    const isHighlight = b.nights >= 7; // highlight long stays
+    const isPast = checkOut <= today;
+
+    const fmtDate = (d) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    const statusChip = status === 'completed'
+      ? '<span class="chip chip-muted">Completed</span>'
+      : status === 'confirmed'
+      ? '<span class="chip chip-success">Confirmed</span>'
+      : '<span class="chip chip-warning">Pending</span>';
+
+    return `<tr class="${isPast ? 'bk-completed' : ''} ${isHighlight && !isPast ? 'bk-highlight' : ''}">
+      <td class="bk-guest">${b.guest}${b.nights >= 7 ? '<span class="bk-nights-badge">' + b.nights + 'N</span>' : ''}</td>
+      <td>${fmtDate(b.checkIn)}</td>
+      <td>${fmtDate(b.checkOut)}</td>
+      <td class="num">${b.nights}</td>
+      <td class="num">$${b.payout.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td style="text-align:center">${statusChip}</td>
+    </tr>`;
+  });
+
+  // Summary row
+  const activeBookings = sorted.filter(b => {
+    const co = new Date(b.checkOut); co.setHours(0,0,0,0);
+    return co > today;
+  });
+  const totalPayout = activeBookings.reduce((s, b) => s + b.payout, 0);
+
+  rows.push(`<tr style="border-top:2px solid var(--brand-blue); font-weight:700;">
+    <td colspan="4" class="bk-guest">Total Upcoming</td>
+    <td class="num" style="color:var(--brand-blue)">$${totalPayout.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+    <td style="text-align:center"><span class="chip chip-muted">${activeBookings.length} bookings</span></td>
+  </tr>`);
+
+  tbody.innerHTML = rows.join('');
+  countChip.textContent = activeBookings.length + ' upcoming';
+})();
+
+// ── Revenue Pipeline Projections (S2) ───────────────────────
+(function renderPipeline() {
+  const container = document.getElementById('pipeline-boxes');
+  const alertArea = document.getElementById('pipeline-alert-area');
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const TARGET = 3800;
+
+  // Helper: get bookings whose check-in falls within a date range
+  function bookingsInRange(startDate, endDate) {
+    return BOOKINGS.filter(b => {
+      const ci = new Date(b.checkIn);
+      ci.setHours(0,0,0,0);
+      return ci >= startDate && ci < endDate;
+    });
+  }
+
+  // Helper: count months spanned by a range (for target calc)
+  function monthsInRange(start, end) {
+    const diffMs = end - start;
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    return Math.max(1, Math.ceil(diffDays / 30));
+  }
+
+  // Helper: format date as "Mon D"
+  function fmtShort(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  const windows = [
+    { label: 'Next 30 Days', days: 30 },
+    { label: 'Next 60 Days', days: 60 },
+    { label: 'Next 90 Days', days: 90 },
+  ];
+
+  let html = '';
+  const alerts = [];
+
+  windows.forEach(w => {
+    const endDate = new Date(today);
+    endDate.setDate(endDate.getDate() + w.days);
+
+    const matches = bookingsInRange(today, endDate);
+    const revenue = matches.reduce((s, b) => s + b.payout, 0);
+    const months = monthsInRange(today, endDate);
+    const target = TARGET * months;
+    const pct = Math.min(100, (revenue / target) * 100);
+    const gap = revenue - target;
+
+    let statusClass;
+    if (pct >= 80) statusClass = 'status-ok';
+    else if (pct >= 50) statusClass = 'status-warn';
+    else statusClass = 'status-bad';
+
+    html += `
+      <div class="pipeline-box">
+        <div class="pipeline-header">
+          <span class="pipeline-label">${w.label}</span>
+          <span class="pipeline-range">${fmtShort(today)} – ${fmtShort(endDate)}</span>
+        </div>
+        <div class="pipeline-amount">$${revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+        <div class="pipeline-meta">${matches.length} booking${matches.length !== 1 ? 's' : ''} · target $${target.toLocaleString()}</div>
+        <div class="pipeline-bar-wrap">
+          <div class="pipeline-bar-fill ${statusClass}" style="width:${pct.toFixed(1)}%"></div>
+        </div>
+        <div class="pipeline-gap">
+          <span class="${statusClass}">${pct.toFixed(0)}% of target</span>
+          <span class="${statusClass}">${gap >= 0 ? '+' : ''}$${gap.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  // Check each month in the next 90 days for under-booked alerts
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  for (let m = 0; m < 3; m++) {
+    const monthStart = new Date(today.getFullYear(), today.getMonth() + m, 1);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + m + 1, 1);
+
+    // Only check future months fully
+    const rangeStart = monthStart > today ? monthStart : today;
+    const monthBookings = bookingsInRange(rangeStart, monthEnd);
+    const monthRevenue = monthBookings.reduce((s, b) => s + b.payout, 0);
+    const pctOfTarget = (monthRevenue / TARGET) * 100;
+
+    // Count open nights
+    const daysInRange = Math.ceil((monthEnd - rangeStart) / (1000*60*60*24));
+    const bookedNights = monthBookings.reduce((s, b) => s + b.nights, 0);
+    const openNights = Math.max(0, daysInRange - bookedNights);
+
+    if (pctOfTarget < 50 && monthStart >= today) {
+      const severity = pctOfTarget < 25 ? 'alert-danger' : '';
+      alerts.push(`
+        <div class="pipeline-alert ${severity}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span><strong>${monthNames[monthStart.getMonth()]}</strong> has only $${monthRevenue.toLocaleString()} booked (${pctOfTarget.toFixed(0)}% of target). ~${openNights} nights still open.</span>
+        </div>
+      `);
+    }
+  }
+
+  alertArea.innerHTML = alerts.join('');
+})();
+
+// ── Event Calendar (S3 — Smart Alerts) ─────────────────────
+(function renderEvents() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  // ── Helpers ──
+  function daysUntil(dateStr) {
+    return Math.ceil((new Date(dateStr) - today) / MS_PER_DAY);
+  }
+
+  function fmtDateRange(start, end) {
+    const s = new Date(start);
+    const e = new Date(end);
+    const sStr = s.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (start === end) return sStr;
+    const eStr = (s.getMonth() === e.getMonth())
+      ? e.getDate()
+      : e.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return sStr + '–' + eStr;
+  }
+
+  function countdownText(days) {
+    if (days < 0) return 'Passed';
+    if (days === 0) return 'Today!';
+    if (days === 1) return 'Tomorrow!';
+    if (days <= 30) return 'in ' + days + ' days';
+    const months = Math.round(days / 30);
+    return 'in ~' + months + ' mo';
+  }
+
+  function countdownClass(days) {
+    if (days < 0) return 'passed';
+    if (days <= 7) return 'urgent';
+    if (days <= 30) return 'soon';
+    return '';
+  }
+
+  function eventNights(e) {
+    const d = Math.round((new Date(e.endDate) - new Date(e.startDate)) / MS_PER_DAY);
+    return Math.max(d, 1); // Single-day events = 1 night
+  }
+
+  // ── Auto-urgency logic ──
+  function getUrgency(e) {
+    const days = daysUntil(e.startDate);
+    const isPast = new Date(e.endDate) < today;
+
+    if (isPast)                           return { chip: 'muted',   label: 'Passed' };
+    if (e.bookedPrice !== null && e.bookedPrice < e.targetPrice.min)
+                                          return { chip: 'danger',  label: 'Underpriced' };
+    if (e.overrideSet)                    return { chip: 'success', label: 'Override set ✓' };
+    if (days <= 7)                        return { chip: 'danger',  label: '⚠ Set NOW' };
+    if (days <= 30)                       return { chip: 'warning', label: 'Set this week' };
+    if (days <= 60)                       return { chip: 'warning', label: 'Set soon' };
+    return { chip: 'muted', label: 'Upcoming' };
+  }
+
+  // ── Classify events ──
+  const upcoming = [];
+  const past = [];
+  EVENTS.forEach((e, i) => {
+    const isPast = new Date(e.endDate) < today;
+    (isPast ? past : upcoming).push({ ...e, idx: i });
+  });
+
+  // ── Revenue impact callout ──
+  let upliftTotal = 0;
+  let noOverrideCount = 0;
+  let underpricedCount = 0;
+  upcoming.forEach(e => {
+    if (!e.overrideSet && e.bookedPrice === null) {
+      noOverrideCount++;
+      // Potential uplift = target avg × nights (vs $0 since no override means leaving money on table)
+      const avgTarget = (e.targetPrice.min + e.targetPrice.max) / 2;
+      upliftTotal += avgTarget * eventNights(e);
+    }
+    if (e.bookedPrice !== null && e.bookedPrice < e.targetPrice.min) {
+      underpricedCount++;
+      const lost = (e.targetPrice.min - e.bookedPrice) * eventNights(e);
+      upliftTotal += lost; // Lost revenue from underpricing
+    }
+  });
+
+  const impactEl = document.getElementById('event-impact');
+  const impactLines = [];
+  if (upliftTotal > 0) {
+    impactLines.push(`<div class="event-impact-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Pricing opportunity: <strong>~$${Math.round(upliftTotal).toLocaleString()}</strong> potential revenue uplift
+    </div>`);
+  }
+  if (noOverrideCount > 0) {
+    impactLines.push(`<div class="event-impact-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <strong>${noOverrideCount} event${noOverrideCount > 1 ? 's' : ''}</strong> with no override set
+    </div>`);
+  }
+  if (underpricedCount > 0) {
+    impactLines.push(`<div class="event-impact-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <strong>${underpricedCount} event${underpricedCount > 1 ? 's' : ''}</strong> booked below target price
+    </div>`);
+  }
+  impactEl.innerHTML = impactLines.length > 0
+    ? '<div class="event-impact">' + impactLines.join('') + '</div>'
+    : '';
+
+  // ── Render event row ──
+  function renderRow(e) {
+    const days = daysUntil(e.startDate);
+    const isPast = new Date(e.endDate) < today;
+    const urg = getUrgency(e);
+    const isUnderpriced = e.bookedPrice !== null && e.bookedPrice < e.targetPrice.min;
+    const priceStr = e.targetPrice.min === e.targetPrice.max
+      ? '$' + e.targetPrice.min + '/night'
+      : '$' + e.targetPrice.min + '–' + e.targetPrice.max + '/night';
+
+    const classes = [
+      'event-row',
+      isPast ? 'past-event' : '',
+      isUnderpriced && !isPast ? 'underpriced' : ''
+    ].filter(Boolean).join(' ');
+
+    const underpricedNote = isUnderpriced
+      ? `<div class="ev-underpriced">Booked at $${e.bookedPrice}/night vs $${e.targetPrice.min}+ target</div>`
+      : '';
+
+    return `<div class="${classes}" onclick="toggleEvent(this, ${e.idx})" data-idx="${e.idx}">
+      <div class="ev-check"></div>
+      <div class="ev-date">${fmtDateRange(e.startDate, e.endDate)}</div>
+      <div class="ev-info">
+        <div class="event-name">${e.name}</div>
+        <div class="ev-note">${e.note}</div>
+        ${underpricedNote}
+      </div>
+      <div class="ev-countdown ${countdownClass(days)}">${countdownText(days)}</div>
+      <div class="ev-price">${priceStr}</div>
+      <div class="chip chip-${urg.chip}">${urg.label}</div>
+    </div>`;
+  }
+
+  // ── Render upcoming events ──
+  const upcomingEl = document.getElementById('event-upcoming');
+  upcomingEl.innerHTML = upcoming.map(renderRow).join('');
+
+  // ── Render past events (collapsed by default) ──
+  const pastToggle = document.getElementById('event-past-toggle');
+  const pastEl = document.getElementById('event-past');
+
+  if (past.length > 0) {
+    pastToggle.innerHTML = `<div class="event-group-label" onclick="togglePastEvents()">
+      <span class="toggle-arrow collapsed" id="past-arrow">▼</span>
+      Past Events (${past.length})
+    </div>`;
+    pastEl.innerHTML = past.map(renderRow).join('');
+    pastEl.style.display = 'none';
+  }
+})();
+
+// ── Action Center (S4 — Enhanced) ───────────────────────────
+// Merge custom actions from localStorage with embedded ACTIONS
+let allActions = [...ACTIONS];
+try {
+  const custom = JSON.parse(localStorage.getItem('cc_custom_actions_v1') || '[]');
+  allActions = allActions.concat(custom);
+} catch(e) {}
+
+let activeFilter = 'all';
+
+function getActionDoneState() {
+  try { return JSON.parse(localStorage.getItem('cc_actions_v4') || '{}'); } catch(e) { return {}; }
+}
+
+function isActionDone(idx) {
+  const state = getActionDoneState();
+  // Check localStorage override, then fall back to data model's `done` field
+  if (state[idx] !== undefined) return state[idx];
+  return allActions[idx] && allActions[idx].done === true;
+}
+
+function renderActionCenter() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const total = allActions.length;
+  const doneCount = allActions.filter((_, i) => isActionDone(i)).length;
+  const pct = total > 0 ? (doneCount / total) * 100 : 0;
+  let barClass;
+  if (pct > 66) barClass = 'ok';
+  else if (pct >= 33) barClass = 'warn';
+  else barClass = 'bad';
+
+  // ── Progress bar ──
+  document.getElementById('action-progress').innerHTML = `
+    <div class="action-progress">
+      <div class="action-progress-label">
+        <span>${doneCount} of ${total} done (${pct.toFixed(0)}%)</span>
+      </div>
+      <div class="action-progress-bar">
+        <div class="action-progress-fill ${barClass}" style="width:${pct.toFixed(1)}%"></div>
+      </div>
+    </div>`;
+
+  // ── Filter counts ──
+  const urgentCount = allActions.filter((a, i) => a.priority === 1 && !isActionDone(i)).length;
+  const weekCount = allActions.filter((a, i) => (a.priority === 1 || a.priority === 2) && !isActionDone(i)).length;
+  const completedCount = doneCount;
+
+  const filters = [
+    { key: 'all', label: 'All', count: total },
+    { key: 'urgent', label: 'Urgent', count: urgentCount },
+    { key: 'week', label: 'This Week', count: weekCount },
+    { key: 'completed', label: 'Completed', count: completedCount },
+  ];
+
+  document.getElementById('action-tabs').innerHTML = `
+    <div class="action-tabs">
+      ${filters.map(f => `<button class="action-tab ${activeFilter === f.key ? 'active' : ''}" onclick="setActionFilter('${f.key}')">${f.label}<span class="tab-count">${f.count}</span></button>`).join('')}
+    </div>`;
+
+  // ── Filter logic ──
+  function passesFilter(a, idx) {
+    const done = isActionDone(idx);
+    switch (activeFilter) {
+      case 'urgent': return a.priority === 1 && !done;
+      case 'week': return (a.priority === 1 || a.priority === 2) && !done;
+      case 'completed': return done;
+      default: return true;
+    }
+  }
+
+  // ── Render rows by group ──
+  const groups = [
+    { key: 'priority', label: 'Priority Actions' },
+    { key: 'phase1', label: 'Playbook — Phase 1' },
+    { key: 'phase2', label: 'Playbook — Phase 2' },
+    { key: 'custom', label: 'Custom Actions' },
+  ];
+
+  const container = document.getElementById('action-list');
+  let html = '';
+
+  groups.forEach(g => {
+    const items = allActions
+      .map((a, i) => ({ ...a, idx: i }))
+      .filter(a => (a.group || 'custom') === g.key && passesFilter(a, a.idx));
+
+    if (items.length === 0) return;
+
+    html += `<div class="action-group-divider">${g.label}</div>`;
+
+    items.forEach(a => {
+      const done = isActionDone(a.idx);
+      const isOverdue = a.dueDate && !done && new Date(a.dueDate) < today;
+      const fmtDue = a.dueDate
+        ? new Date(a.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        : null;
+
+      html += `<div class="action-row ${done ? 'done' : ''} ${isOverdue ? 'overdue-row' : ''}" onclick="toggleAction(this, ${a.idx})" data-idx="${a.idx}">
+        <div class="act-check ${done ? 'checked' : ''}"></div>
+        <div class="act-body">
+          <div class="act-text">${a.text}</div>
+          <div class="act-note">${a.note}</div>
+          <div class="act-meta">
+            <span class="priority-badge p${a.priority}">P${a.priority}${a.priority === 1 ? ' · Urgent' : ''}</span>
+            ${fmtDue ? `<span class="due-chip ${isOverdue ? 'overdue' : ''}">Due ${fmtDue}${isOverdue ? ' · Overdue' : ''}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+renderActionCenter();
+
+function setActionFilter(key) {
+  activeFilter = key;
+  renderActionCenter();
+}
+
+function showAddAction() {
+  const form = document.getElementById('add-action-form');
+  form.classList.toggle('visible');
+  if (form.classList.contains('visible')) {
+    document.getElementById('add-action-text').focus();
+  }
+}
+
+function submitAddAction() {
+  const text = document.getElementById('add-action-text').value.trim();
+  if (!text) return;
+  const priority = parseInt(document.getElementById('add-action-priority').value);
+  const newAction = { text, note: 'Custom action', priority, group: 'custom', dueDate: null, done: false };
+
+  // Save to localStorage custom actions
+  let custom = [];
+  try { custom = JSON.parse(localStorage.getItem('cc_custom_actions_v1') || '[]'); } catch(e) {}
+  custom.push(newAction);
+  localStorage.setItem('cc_custom_actions_v1', JSON.stringify(custom));
+
+  // Add to runtime array and re-render
+  allActions.push(newAction);
+  document.getElementById('add-action-text').value = '';
+  document.getElementById('add-action-form').classList.remove('visible');
+  renderActionCenter();
+}
+
+// ── Toggle Functions ────────────────────────────────────────
+function toggleEvent(row, idx) {
+  row.querySelector('.ev-check').classList.toggle('checked');
+  row.classList.toggle('done');
+  saveState();
+}
+
+function togglePastEvents() {
+  const pastEl = document.getElementById('event-past');
+  const arrow = document.getElementById('past-arrow');
+  const isHidden = pastEl.style.display === 'none';
+  pastEl.style.display = isHidden ? 'flex' : 'none';
+  arrow.classList.toggle('collapsed', !isHidden);
+}
+
+function toggleAction(row, idx) {
+  const done = !isActionDone(idx);
+  const state = getActionDoneState();
+  state[idx] = done;
+  localStorage.setItem('cc_actions_v4', JSON.stringify(state));
+  renderActionCenter();
+  saveState();
+}
+
+// ── Persist State ───────────────────────────────────────────
+function saveState() {
+  const eventState = {};
+  document.querySelectorAll('.event-row').forEach(r => {
+    eventState[r.dataset.idx] = r.classList.contains('done');
+  });
+  localStorage.setItem('cc_events_v4', JSON.stringify(eventState));
+  // Actions now saved via cc_actions_v4 in toggleAction directly
+}
+
+function loadState() {
+  try {
+    const eventState = JSON.parse(localStorage.getItem('cc_events_v4') || '{}');
+    document.querySelectorAll('.event-row').forEach(r => {
+      if (eventState[r.dataset.idx]) {
+        r.classList.add('done');
+        r.querySelector('.ev-check').classList.add('checked');
+      }
+    });
+    // Actions are loaded via isActionDone() during renderActionCenter()
+  } catch(e) {}
+}
+
+loadState();
+
+// ── Guest Message Toolkit (S5) ─────────────────────────────
+let activeMsg = 0;
+
+function renderMsgTabs() {
+  const tabsEl = document.getElementById('msg-tabs');
+  tabsEl.innerHTML = MESSAGE_TEMPLATES.map((m, i) =>
+    `<button class="msg-tab ${i === activeMsg ? 'active' : ''}" onclick="setMsgTab(${i})">${m.tab}</button>`
+  ).join('');
+}
+
+function renderMsgContent() {
+  const m = MESSAGE_TEMPLATES[activeMsg];
+  const cfg = GUEST_CONFIG;
+
+  // Render template with placeholders as styled pills
+  function renderWithPills(template) {
+    return template
+      .replace(/\n/g, '<br>')
+      .replace(/\{(\w+)\}/g, (match, key) => {
+        // If it's a config value, show the value as a pill
+        if (cfg[key] !== undefined) {
+          return `<span class="msg-placeholder">${cfg[key]}</span>`;
+        }
+        // Guest-specific placeholders stay as editable pills
+        const labels = { guest_name: 'Guest Name', dates: 'Dates' };
+        return `<span class="msg-placeholder">${labels[key] || key}</span>`;
+      });
+  }
+
+  // Build clean text (for copy) replacing placeholders with values
+  function buildCleanText(template, guestName, dates) {
+    return template
+      .replace(/\{guest_name\}/g, guestName || 'Guest')
+      .replace(/\{dates\}/g, dates || '[dates]')
+      .replace(/\{(\w+)\}/g, (match, key) => cfg[key] || match);
+  }
+
+  document.getElementById('msg-content').innerHTML = `
+    <div class="msg-content">
+      <div class="msg-timing">${m.timing}</div>
+      <div class="msg-guest-fields">
+        <div class="msg-field-group">
+          <span class="msg-field-label">Guest Name</span>
+          <input type="text" class="msg-field-input" id="msg-guest-name" placeholder="e.g. Sarah" value="">
+        </div>
+        <div class="msg-field-group">
+          <span class="msg-field-label">Dates</span>
+          <input type="text" class="msg-field-input" id="msg-dates" placeholder="e.g. Apr 10–13" value="">
+        </div>
+      </div>
+      <div class="msg-template-box" id="msg-template-display">${renderWithPills(m.template)}</div>
+      <button class="msg-copy-btn" id="msg-copy-btn" onclick="copyMessage()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy Message
+      </button>
+    </div>
+  `;
+}
+
+function setMsgTab(idx) {
+  activeMsg = idx;
+  renderMsgTabs();
+  renderMsgContent();
+}
+
+function copyMessage() {
+  const m = MESSAGE_TEMPLATES[activeMsg];
+  const guestName = document.getElementById('msg-guest-name').value.trim();
+  const dates = document.getElementById('msg-dates').value.trim();
+
+  const clean = m.template
+    .replace(/\{guest_name\}/g, guestName || 'Guest')
+    .replace(/\{dates\}/g, dates || '[dates]')
+    .replace(/\{(\w+)\}/g, (match, key) => GUEST_CONFIG[key] || match);
+
+  navigator.clipboard.writeText(clean).then(() => {
+    const btn = document.getElementById('msg-copy-btn');
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Message`;
+    }, 2000);
+  });
+}
+
+renderMsgTabs();
+renderMsgContent();
+
+// ── House Rules ────────────────────────────────────────────
+(function renderHouseRules() {
+  const body = document.getElementById('house-rules-body');
+  body.innerHTML = HOUSE_RULES.map(r =>
+    `<div class="house-rule-item"><span class="house-rule-icon">${r.icon}</span>${r.rule}</div>`
+  ).join('');
+})();
+
+function toggleHouseRules() {
+  const body = document.getElementById('house-rules-body');
+  const arrow = document.getElementById('rules-arrow');
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  arrow.classList.toggle('collapsed', !isHidden);
+}
+
+// ── Monthly Report ─────────────────────────────────────────
+let activeReportMonth = null; // set by renderReportPills
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function renderReportPills() {
+  const container = document.getElementById('report-month-pills');
+  // Find the last month with paid data
+  let lastPaidIdx = -1;
+  MONTHLY_DATA.forEach((d, i) => { if (d.paid > 0) lastPaidIdx = i; });
+  if (activeReportMonth === null) activeReportMonth = lastPaidIdx >= 0 ? lastPaidIdx : 0;
+
+  container.innerHTML = MONTH_NAMES.map((m, i) => {
+    const d = MONTHLY_DATA[i];
+    const hasPaid = d.paid > 0;
+    const hasUpcoming = d.upcoming > 0;
+    const hasData = hasPaid || hasUpcoming;
+    const isActive = i === activeReportMonth;
+    const isFuture = !hasData && d.total === 0;
+
+    let cls = 'month-pill';
+    if (isActive) cls += ' month-pill-active';
+    else if (hasPaid) cls += ' month-pill-has-data';
+    else if (isFuture) cls += ' month-pill-disabled';
+
+    return `<button class="${cls}" ${isFuture ? 'disabled' : ''} onclick="setReportMonth(${i})">${m}</button>`;
+  }).join('');
+}
+
+function setReportMonth(idx) {
+  activeReportMonth = idx;
+  renderReportPills();
+  renderReportContent();
+}
+
+function renderReportContent() {
+  const container = document.getElementById('report-content');
+  const idx = activeReportMonth;
+  const d = MONTHLY_DATA[idx];
+  const monthName = MONTH_NAMES[idx];
+  const detail = MONTHLY_DETAILS[monthName];
+
+  // No data at all
+  if (d.total === 0) {
+    container.innerHTML = '<div class="report-no-data">No data available for this month yet.</div>';
+    return;
+  }
+
+  // Projected only (no paid data, just upcoming)
+  const isPaid = d.paid > 0;
+
+  // Build metrics grid
+  const revenue = isPaid ? d.paid : d.upcoming;
+  const revenueLabel = isPaid ? 'Net Revenue' : 'Projected Revenue';
+  const adr = detail ? '$' + detail.adr : '—';
+  const occ = detail ? (detail.occupancy * 100).toFixed(0) + '%' : '—';
+  const bookings = detail ? detail.bookings : countBookingsForMonth(monthName);
+  const rating = detail && detail.rating ? detail.rating.toFixed(1) + '\u2605' : '—';
+  const reviews = detail ? detail.totalReviews : '—';
+
+  let html = `
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:16px;">
+      <span style="font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--brand-blue);">${monthName} 2026</span>
+      <span class="chip ${isPaid ? 'chip-muted' : ''}" style="font-size:11px;">${isPaid ? 'Actual' : 'Projected'}</span>
+    </div>
+    <div class="report-grid">
+      <div class="report-metric">
+        <div class="report-metric-value">$${revenue.toLocaleString()}</div>
+        <div class="report-metric-label">${revenueLabel}</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value">${adr}</div>
+        <div class="report-metric-label">Avg Nightly Rate</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value">${occ}</div>
+        <div class="report-metric-label">Occupancy</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value">${bookings}</div>
+        <div class="report-metric-label">Bookings</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value">${rating}</div>
+        <div class="report-metric-label">Rating</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value">${reviews}</div>
+        <div class="report-metric-label">Total Reviews</div>
+      </div>
+    </div>
+  `;
+
+  // Month-over-month comparison
+  if (idx > 0) {
+    const prev = MONTHLY_DATA[idx - 1];
+    const prevName = MONTH_NAMES[idx - 1];
+    const prevDetail = MONTHLY_DETAILS[prevName];
+    const prevRev = prev.paid > 0 ? prev.paid : prev.upcoming;
+
+    html += '<div class="report-comparison"><h4>vs ' + prevName + ' 2026</h4>';
+
+    if (prevRev > 0) {
+      const revChange = revenue - prevRev;
+      const revPct = ((revChange / prevRev) * 100).toFixed(0);
+      const revCls = revChange >= 0 ? 'report-comp-up' : 'report-comp-down';
+      const revSign = revChange >= 0 ? '+' : '';
+      html += `<div class="report-comp-row">
+        <span class="report-comp-label">Revenue</span>
+        <span class="report-comp-value ${revCls}">${revChange >= 0 ? '\u2191' : '\u2193'} ${revSign}${revPct}% ($${prevRev.toLocaleString()} \u2192 $${revenue.toLocaleString()})</span>
+      </div>`;
+    } else {
+      html += `<div class="report-comp-row"><span class="report-comp-label">Revenue</span><span class="report-comp-value report-comp-neutral">N/A (no ${prevName} data)</span></div>`;
+    }
+
+    if (detail && prevDetail) {
+      const adrChange = detail.adr - prevDetail.adr;
+      const adrCls = adrChange >= 0 ? 'report-comp-up' : 'report-comp-down';
+      html += `<div class="report-comp-row">
+        <span class="report-comp-label">ADR</span>
+        <span class="report-comp-value ${adrCls}">${adrChange >= 0 ? '\u2191' : '\u2193'} $${prevDetail.adr} \u2192 $${detail.adr}</span>
+      </div>`;
+
+      const occChange = detail.occupancy - prevDetail.occupancy;
+      const occCls = occChange >= 0 ? 'report-comp-up' : 'report-comp-down';
+      html += `<div class="report-comp-row">
+        <span class="report-comp-label">Occupancy</span>
+        <span class="report-comp-value ${occCls}">${occChange >= 0 ? '\u2191' : '\u2193'} ${(prevDetail.occupancy * 100).toFixed(0)}% \u2192 ${(detail.occupancy * 100).toFixed(0)}%</span>
+      </div>`;
+    }
+    html += '</div>';
+  }
+
+  // vs Target
+  const target = d.target;
+  const targetDiff = revenue - target;
+  const targetPct = ((revenue / target) * 100).toFixed(0);
+  const targetCls = targetDiff >= 0 ? 'report-comp-up' : 'report-comp-down';
+  html += `<div class="report-comparison"><h4>vs Target</h4>
+    <div class="report-comp-row">
+      <span class="report-comp-label">Revenue vs $${target.toLocaleString()} target</span>
+      <span class="report-comp-value ${targetCls}">${targetPct}% (${targetDiff >= 0 ? '+' : ''}$${targetDiff.toLocaleString()})</span>
+    </div>
+  </div>`;
+
+  // Auto-generated insights
+  const insights = generateInsights(idx, d, detail);
+  if (insights.length > 0) {
+    html += '<div class="report-insights"><h4>Key Insights</h4>';
+    insights.forEach(insight => {
+      html += `<div class="report-insight-item">${insight}</div>`;
+    });
+    html += '</div>';
+  }
+
+  // Print button
+  html += '<button class="report-print-btn" onclick="window.print()">Print Report</button>';
+
+  container.innerHTML = html;
+}
+
+function countBookingsForMonth(monthName) {
+  const monthIdx = MONTH_NAMES.indexOf(monthName);
+  if (monthIdx < 0) return 0;
+  const year = 2026;
+  return BOOKINGS.filter(b => {
+    const ci = new Date(b.checkIn);
+    return ci.getMonth() === monthIdx && ci.getFullYear() === year;
+  }).length;
+}
+
+function generateInsights(idx, d, detail) {
+  const insights = [];
+  const monthName = MONTH_NAMES[idx];
+  const isPaid = d.paid > 0;
+
+  // 1. Revenue direction vs previous month
+  if (idx > 0) {
+    const prev = MONTHLY_DATA[idx - 1];
+    const prevRev = prev.paid > 0 ? prev.paid : prev.upcoming;
+    if (prevRev > 0 && d.total > 0) {
+      const change = d.total - prevRev;
+      const pct = Math.abs(((change / prevRev) * 100).toFixed(0));
+      const mult = (d.total / prevRev).toFixed(1);
+      if (change > 0 && pct > 100) {
+        insights.push(`Strongest growth \u2014 ${mult}x jump from ${MONTH_NAMES[idx-1]} ($${prevRev.toLocaleString()} \u2192 $${d.total.toLocaleString()})`);
+      } else if (change > 0) {
+        insights.push(`Revenue up ${pct}% from ${MONTH_NAMES[idx-1]}`);
+      } else if (change < 0) {
+        insights.push(`Revenue down ${pct}% from ${MONTH_NAMES[idx-1]}`);
+      }
+    }
+  }
+
+  // 2. Notable events this month
+  const monthEvents = EVENTS.filter(e => {
+    const start = new Date(e.startDate);
+    const end = new Date(e.endDate);
+    const monthStart = new Date(2026, idx, 1);
+    const monthEnd = new Date(2026, idx + 1, 0);
+    return start <= monthEnd && end >= monthStart;
+  });
+  if (monthEvents.length > 0) {
+    const names = monthEvents.map(e => e.name.replace(/^[^\w]*/, '').trim()).slice(0, 3);
+    insights.push(`Key events: ${names.join(', ')}`);
+  }
+
+  // 3. vs target
+  const targetPct = ((d.total / d.target) * 100).toFixed(0);
+  if (d.total >= d.target) {
+    insights.push(`Hit ${targetPct}% of monthly target \u2014 on track`);
+  } else if (targetPct >= 70) {
+    insights.push(`Reached ${targetPct}% of $${d.target.toLocaleString()} monthly target`);
+  } else {
+    insights.push(`Still ${100 - targetPct}% below monthly target ($${d.target.toLocaleString()})`);
+  }
+
+  // 4. Booking pace (how far in advance bookings were made)
+  if (isPaid || d.upcoming > 0) {
+    const monthBookings = BOOKINGS.filter(b => {
+      const ci = new Date(b.checkIn);
+      return ci.getMonth() === idx && ci.getFullYear() === 2026;
+    });
+    if (monthBookings.length > 0) {
+      const leadDays = monthBookings.map(b => {
+        const booked = new Date(b.bookedOn);
+        const checkIn = new Date(b.checkIn);
+        return Math.round((checkIn - booked) / (1000 * 60 * 60 * 24));
+      });
+      const avgLead = Math.round(leadDays.reduce((a, b) => a + b, 0) / leadDays.length);
+      insights.push(`Average booking lead time: ${avgLead} days in advance`);
+    }
+  }
+
+  // 5. Occupancy insight
+  if (detail && detail.occupancy >= 0.75) {
+    insights.push(`Strong occupancy at ${(detail.occupancy * 100).toFixed(0)}% \u2014 above 75% target`);
+  } else if (detail && detail.occupancy < 0.5) {
+    insights.push(`Low occupancy at ${(detail.occupancy * 100).toFixed(0)}% \u2014 consider price adjustments`);
+  }
+
+  return insights.slice(0, 5);
+}
+
+renderReportPills();
+renderReportContent();
+</script>
+</body>
+</html>

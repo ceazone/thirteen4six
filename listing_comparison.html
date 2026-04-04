@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Copy Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --paper: #faf9f7;
+  --muted: #7a7670;
+  --border: #e5e2dc;
+  --red-bg: #fff5f5;
+  --red-border: #ffccc7;
+  --red-text: #cf1322;
+  --green-bg: #f0faf0;
+  --green-border: #b7ebc0;
+  --green-text: #237a2e;
+  --blue-accent: #2563eb;
+  --warm-highlight: #fef9ec;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Title comparison */
+.title-section {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.title-compare {
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr;
+  gap: 0;
+  align-items: center;
+}
+
+.title-card {
+  padding: 24px 28px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.title-card.old {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+}
+
+.title-card.new {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+}
+
+.title-card .label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.title-card.old .label { color: var(--red-text); }
+.title-card.new .label { color: var(--green-text); }
+
+.title-card .title-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.arrow-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+/* Description comparison */
+.desc-section {
+  margin-bottom: 48px;
+}
+
+.desc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.desc-col {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.desc-col-header {
+  padding: 16px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.desc-col.old .desc-col-header {
+  background: var(--red-bg);
+  border-bottom: 1px solid var(--red-border);
+  color: var(--red-text);
+}
+
+.desc-col.new .desc-col-header {
+  background: var(--green-bg);
+  border-bottom: 1px solid var(--green-border);
+  color: var(--green-text);
+}
+
+.desc-col-body {
+  padding: 24px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  background: white;
+  min-height: 400px;
+}
+
+.desc-col.old .desc-col-body {
+  color: var(--muted);
+}
+
+.desc-col-body .section-heading {
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 20px;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.desc-col-body .section-heading:first-child {
+  margin-top: 0;
+}
+
+.desc-col-body p {
+  margin-bottom: 12px;
+}
+
+.desc-col-body ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
+.desc-col-body ul li {
+  padding: 3px 0;
+}
+
+.char-count {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Changes summary */
+.changes-section {
+  margin-bottom: 48px;
+}
+
+.changes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.change-card {
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+.change-card .change-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.change-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.change-card p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Keep section */
+.keep-section {
+  background: var(--warm-highlight);
+  border: 1px solid #e8dfc8;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 48px;
+}
+
+.keep-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.keep-section p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.keep-section ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.keep-section ul li {
+  font-size: 14px;
+  color: var(--muted);
+  padding: 2px 0;
+}
+
+.keep-section ul li::before {
+  content: "✓ ";
+  color: var(--green-text);
+  font-weight: 600;
+}
+
+/* Strikethrough for old */
+.strike {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Highlight for new */
+.highlight {
+  background: #d4f5d0;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .desc-grid { grid-template-columns: 1fr; }
+  .title-compare { grid-template-columns: 1fr; gap: 12px; }
+  .arrow-col { transform: rotate(90deg); }
+  .changes-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Listing Copy — Before & After</h1>
+    <p>Columbia Heights Basement Suite · Airbnb Listing #1436366815078329705</p>
+  </div>
+
+  <!-- TITLE COMPARISON -->
+  <div class="title-section">
+    <div class="section-label">Title</div>
+    <div class="title-compare">
+      <div class="title-card old">
+        <div class="label">Original</div>
+        <div class="title-text">Modern 1BR • Street Parking Permit • Near Metro</div>
+      </div>
+      <div class="arrow-col">→</div>
+      <div class="title-card new">
+        <div class="label">✅ New — Focus group winner</div>
+        <div class="title-text">Private DC Suite · Free Parking · 9 Min to Metro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY CHANGES SUMMARY -->
+  <div class="changes-section">
+    <div class="section-label">What's changing & why</div>
+    <div class="changes-grid">
+      <div class="change-card">
+        <div class="change-icon">🎯</div>
+        <h3>Leads with differentiators</h3>
+        <p>Old copy opens generic ("cozy and convenient"). New copy opens with what reviews actually rave about: private space, kitchen, walkability, WiFi speed.</p>
+      </div>
+      <div class="change-card">
+        <div class="change-icon">🔍</div>
+        <h3>Search-friendly keywords</h3>
+        <p>Adds "private entrance," "dedicated workspace," "357 Mbps WiFi," "remote work" — terms guests actively filter and search for.</p>
+      </div>
+      <div class="change-card">
+        <div class="change-icon">📅</div>
+        <h3>Seasonal hook for 2026</h3>
+        <p>New section positions DC as the place to be for America's 250th anniversary — Cherry Blossom, Pride, July 4th — creating urgency.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION COMPARISON -->
+  <div class="desc-section">
+    <div class="section-label">Listing Description</div>
+    <div class="desc-grid">
+
+      <!-- OLD -->
+      <div class="desc-col old">
+        <div class="desc-col-header">
+          <span>✕</span> Current — on Airbnb now
+        </div>
+        <div class="desc-col-body">
+          <p>Enjoy a cozy and convenient stay in the heart of Columbia Heights with amenities to make you feel at home! Features include a queen-size Casper mattress, smart TVs with streaming, a full kitchen, complimentary tea & coffee, in-unit washer and dryer. Fast Wi-Fi.</p>
+
+          <p>The area:<br>
+          ✨ Just a 9-minute walk to the Columbia Heights Metro (Green/Yellow Line) for easy access around DC.<br>
+          ✨ Only 7 minutes to shops like Lidl, Target, Marshalls, and Best Buy.<br>
+          ✨ Steps from great local coffee spots and restaurants.</p>
+        </div>
+        <div class="char-count">~497 / 500 characters used</div>
+      </div>
+
+      <!-- NEW -->
+      <div class="desc-col new">
+        <div class="desc-col-header">
+          <span>★</span> Proposed — ready to publish
+        </div>
+        <div class="desc-col-body">
+          <div class="section-heading">Opening Hook</div>
+          <p>Live like a local in one of DC's most walkable neighborhoods. This private basement suite in Columbia Heights has everything you need — your own entrance, a fully equipped kitchen, in-unit laundry, a dedicated workspace with 357 Mbps WiFi, and two smart TVs loaded with Netflix, HBO, and Amazon Prime. Quiet, spacious, and just 9 minutes from the Metro.</p>
+
+          <div class="section-heading">The Space</div>
+          <ul>
+            <li>🚪 Private entrance — come and go on your own schedule</li>
+            <li>🛏️ Queen Casper mattress — sleep well on a premium mattress</li>
+            <li>🍳 Full kitchen — cook in and save, or prep before a night out</li>
+            <li>🫧 In-unit washer & dryer — pack light, stay longer</li>
+            <li>💻 Dedicated workspace + 357 Mbps WiFi — remote work ready</li>
+            <li>📺 2 Smart TVs — Netflix, HBO, Amazon Prime, YouTube</li>
+            <li>❄️ Central air conditioning — comfortable year-round</li>
+            <li>☕ Complimentary tea & coffee — your first cup is on us</li>
+            <li>🔐 Keypad self check-in — arrive on your schedule</li>
+          </ul>
+
+          <div class="section-heading">The Neighborhood</div>
+          <p>Columbia Heights is DC's most walkable, food-forward neighborhood — 9-min walk to the Metro (Green/Yellow Line) for quick access to downtown, the National Mall, U Street, Navy Yard, and beyond.</p>
+          <ul>
+            <li>🛒 7-min walk to Target, Marshalls, Lidl, and Best Buy</li>
+            <li>☕ Steps from independent coffee shops and local restaurants</li>
+            <li>🚇 Green/Yellow Line → National Mall, Navy Yard, U Street in minutes</li>
+          </ul>
+
+          <div class="section-heading">2026 — The Best Year to Visit DC</div>
+          <p>Washington is the center of America's 250th anniversary celebrations. From Cherry Blossom season to Capital Pride to the biggest July 4th in 50 years, you'll be perfectly positioned on the Green Line.</p>
+
+          <div class="section-heading">Perfect For</div>
+          <p>Remote workers, government contractors, DC interns, weekend couples, and travelers who want a real home base — not just a hotel room.</p>
+        </div>
+        <div class="char-count">~1,480 characters · Airbnb allows up to 500 in main description — see note below</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- IMPORTANT NOTE -->
+  <div class="keep-section" style="background: #fff5f5; border-color: #ffccc7;">
+    <h3>⚠️ Important: Character Limit</h3>
+    <p>Airbnb's main "Listing description" field has a <strong>500-character limit</strong>. The full v2 copy above is ~1,480 characters, so we'll need to fit the strongest parts into 500 characters for the main description. The remaining sections (The Space, Neighborhood, 2026, Perfect For) can go into "Your property" and "Guest access" fields, which have their own limits. I'll handle the splitting for you once you approve the content.</p>
+  </div>
+
+  <!-- WHAT WE'RE KEEPING -->
+  <div class="keep-section">
+    <h3>🔒 Not changing — these stay exactly as they are</h3>
+    <p>Your v2 copy doc specifically recommends keeping these sections untouched:</p>
+    <ul>
+      <li><strong>"Other things to note"</strong> — the honest description of the rowhouse, low pipe, sound between floors, and parking. Your 5.0 accuracy rating comes from this transparency.</li>
+      <li><strong>"Interaction with guests"</strong> — the warm, approachable tone matches your review feedback perfectly.</li>
+      <li><strong>"Guest access"</strong> — clear boundaries about indoor vs. outdoor areas.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
