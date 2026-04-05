@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asha's Guide — Thirteen4Six Airbnb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS — Thirteen4Six brand
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --brand-blue: #0A3191;
+  --brand-blue-dark: #071E5E;
+  --brand-blue-light: #1A4FBF;
+  --cream: #FAF6ED;
+  --cream-dark: #F0E8D8;
+  --white: #FFFFFF;
+  --success: #1B7A3D;
+  --success-bg: #E8F5ED;
+  --warning: #C87D14;
+  --warning-bg: #FFF6E5;
+  --danger: #B82525;
+  --danger-bg: #FDF0F0;
+  --text: #0A3191;
+  --text-secondary: #4A5A7A;
+  --text-muted: #8A92A6;
+  --border: #D4CBB8;
+  --border-light: #E8E0D0;
+  --font-display: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'DM Sans', -apple-system, system-ui, sans-serif;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(10,49,145,0.06);
+  --shadow-md: 0 2px 8px rgba(10,49,145,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+*:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--text);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65;
+}
+
+/* ═══ HEADER ═══ */
+.header {
+  background: var(--white);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-blue);
+}
+.header-right {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  text-align: center;
+  padding: 56px 24px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.hero-badge {
+  display: inline-block;
+  background: var(--brand-blue);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 5px 14px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--brand-blue);
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: 17px;
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ═══ NAV TABS ═══ */
+.nav-wrap {
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 24px;
+}
+.nav {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 8px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--brand-blue);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  transition: all .2s;
+}
+.nav-btn:hover { border-color: var(--brand-blue); background: var(--cream-dark); }
+.nav-btn.active {
+  background: var(--brand-blue);
+  color: var(--white);
+  border-color: var(--brand-blue);
+}
+
+/* ═══ MAIN ═══ */
+.main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ═══ SECTION ═══ */
+.section {
+  display: none;
+  animation: fadeIn 0.35s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-header {
+  padding: 40px 0 24px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 28px;
+}
+.section-num {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 15px;
+  text-align: center;
+  line-height: 32px;
+  margin-bottom: 12px;
+}
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--brand-blue);
+  margin-bottom: 8px;
+}
+.section-header p {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+/* ═══ CARD ═══ */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: border-color .2s;
+}
+.card:hover { border-color: var(--brand-blue-light); }
+.card h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--brand-blue);
+  margin-bottom: 12px;
+}
+.card p, .card li { color: #3A4A6A; line-height: 1.7; }
+.card p { margin-bottom: 12px; }
+.card p:last-child { margin-bottom: 0; }
+
+.card-success { border-left: 4px solid var(--success); background: var(--success-bg); }
+.card-warning { border-left: 4px solid var(--warning); background: var(--warning-bg); }
+.card-danger { border-left: 4px solid var(--danger); background: var(--danger-bg); }
+.card-blue { border-left: 4px solid var(--brand-blue); }
+
+/* ═══ CALLOUT ═══ */
+.callout {
+  background: var(--cream-dark);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px 24px;
+  margin: 20px 0;
+  font-size: 15px;
+}
+.callout strong { color: var(--brand-blue); }
+
+/* ═══ TABLE ═══ */
+.nice-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  margin: 16px 0;
+}
+.nice-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--cream);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  border-bottom: 1.5px solid var(--border);
+}
+.nice-table th:first-child { border-radius: 8px 0 0 0; }
+.nice-table th:last-child { border-radius: 0 8px 0 0; }
+.nice-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text);
+}
+.nice-table tr:last-child td { border-bottom: none; }
+.val { color: var(--brand-blue); font-weight: 700; }
+.note { color: var(--text-muted); font-size: 13px; }
+
+/* ═══ MONTH GRID ═══ */
+.month-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+.month-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px;
+}
+.month-card h4 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--brand-blue);
+  margin-bottom: 8px;
+}
+.month-card .detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.month-card .detail strong { color: var(--text); }
+.month-card .target {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand-blue);
+  margin-top: 8px;
+}
+.month-card.highlight {
+  border: 2px solid var(--brand-blue);
+  background: rgba(10,49,145,0.03);
+}
+
+/* ═══ CHECKLIST ═══ */
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.checklist li {
+  padding: 14px 0 14px 36px;
+  position: relative;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border-light);
+  color: #3A4A6A;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 17px;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+}
+.checklist li.done::before {
+  background: var(--success);
+  border-color: var(--success);
+}
+.checklist li.done::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 19px;
+  width: 5px;
+  height: 10px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.checklist li.done { color: var(--text-muted); }
+
+/* ═══ STEPS ═══ */
+.step {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border-light);
+}
+.step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.step-num-inline {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--brand-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.step-body { flex: 1; }
+.step-body h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-blue);
+  margin-bottom: 6px;
+}
+.step-body p {
+  font-size: 15px;
+  color: #3A4A6A;
+  margin-bottom: 8px;
+}
+
+/* ═══ ACCORDION ═══ */
+.accordion {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.acc-trigger {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--white);
+  border: none;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand-blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background .2s;
+}
+.acc-trigger:hover { background: var(--cream); }
+.acc-trigger .arrow {
+  transition: transform .2s;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.acc-trigger.open .arrow { transform: rotate(180deg); }
+.acc-panel {
+  display: none;
+  padding: 0 20px 20px;
+  background: var(--white);
+  font-size: 15px;
+  color: #3A4A6A;
+  line-height: 1.7;
+}
+.acc-panel.open { display: block; }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  background: var(--brand-blue-dark);
+  padding: 20px 32px;
+  text-align: right;
+}
+.footer span {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.04em;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 700px) {
+  .hero h1 { font-size: 28px; }
+  .month-grid { grid-template-columns: 1fr; }
+  .header { padding: 0 16px; }
+  .main { padding: 0 16px 60px; }
+  .nav { gap: 6px; }
+  .nav-btn { font-size: 12px; padding: 6px 12px; }
+  .step { flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-brand">Thirteen4Six</div>
+  <div class="header-right">Asha's Airbnb Guide</div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-badge">Your Complete Guide</div>
+  <h1>Everything You Need to Run Our Airbnb</h1>
+  <p>Hey Asha — this page walks you through our entire Airbnb strategy, how PriceLabs works, and exactly what to do daily, weekly, and monthly. Bookmark this and come back whenever you need it.</p>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="nav-btn active" data-tab="big-picture">The Big Picture</button>
+    <button class="nav-btn" data-tab="pricelabs">PriceLabs Strategy</button>
+    <button class="nav-btn" data-tab="pricing-calendar">Pricing Calendar</button>
+    <button class="nav-btn" data-tab="command-center">Command Center</button>
+    <button class="nav-btn" data-tab="cleaning-fees">Cleaning Fees</button>
+    <button class="nav-btn" data-tab="daily">Daily Routine</button>
+    <button class="nav-btn" data-tab="monthly">Monthly Routine</button>
+    <button class="nav-btn" data-tab="when-to-pivot">When to Pivot</button>
+    <button class="nav-btn" data-tab="glossary">Quick Glossary</button>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 1: THE BIG PICTURE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section active" id="big-picture">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>The Big Picture</h2>
+    <p>What we're doing, why, and where we stand right now.</p>
+  </div>
+
+  <div class="card">
+    <h3>Our Property</h3>
+    <p>We have a <strong>1-bedroom, 1-bathroom basement suite</strong> in Columbia Heights, DC. It has a full kitchen, in-unit laundry, and a private entrance — which is a big deal for guests. It's listed on Airbnb as <strong>"Private DC Suite · Free Parking · 9 Min to Metro."</strong></p>
+  </div>
+
+  <div class="card card-success">
+    <h3>What's Going Great</h3>
+    <p>Our guest experience is <strong>exceptional</strong>. We have a perfect <strong>5.0 rating across 64 reviews</strong>, hit all 4 Superhost criteria, and guests constantly mention cleanliness and communication. The product is not the problem — it's amazing.</p>
+  </div>
+
+  <div class="card card-danger">
+    <h3>What We're Fixing: Pricing</h3>
+    <p>We were charging roughly the same rate ($133–150/night) no matter the day — a random Tuesday in January was priced the same as July 4th weekend. That meant we were leaving thousands of dollars on the table during peak DC events, while also not being competitive enough during slow periods to fill the calendar.</p>
+    <p>The fix: <strong>dynamic pricing through PriceLabs</strong>, which automatically adjusts our nightly rate based on demand, day of the week, seasonality, and local events.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Our Goal</h3>
+    <p>Go from <strong>~$1,900/month → $3,800/month</strong> within 90 days by getting occupancy from ~40% up to <strong>70%+</strong> and raising our average nightly rate. The DC 1-bedroom median earns about $36K/year — we're targeting <strong>$45K/year</strong>.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Bottom line:</strong> Guests love our place. We just need to charge the right price on the right nights. That's what PriceLabs does, and that's what this whole strategy is built around.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 2: PRICELABS STRATEGY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="pricelabs">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>How PriceLabs Works</h2>
+    <p>Think of PriceLabs as a smart assistant that adjusts our price every single day so we don't have to.</p>
+  </div>
+
+  <div class="card">
+    <h3>What Is PriceLabs?</h3>
+    <p>PriceLabs is a tool (~$20/month) that connects to our Airbnb listing and <strong>automatically sets our nightly price</strong> based on what's happening in the DC market. It looks at things like: how many other listings are available, what day of the week it is, whether there's a big event in town, and how far out the date is.</p>
+    <p>Once it's set up, it pushes updated prices to Airbnb automatically — we don't have to log in and change prices manually.</p>
+  </div>
+
+  <div class="card">
+    <h3>The Key Settings We've Configured</h3>
+    <table class="nice-table">
+      <tr><th>Setting</th><th>What We Set</th><th>What It Means</th></tr>
+      <tr>
+        <td><strong>Base Price</strong></td>
+        <td class="val">$155/night</td>
+        <td class="note">This is our "anchor." PriceLabs adjusts UP or DOWN from this number. The DC average for 1-bedrooms is $146, so we're slightly above average.</td>
+      </tr>
+      <tr>
+        <td><strong>Minimum Price</strong></td>
+        <td class="val">$115/night</td>
+        <td class="note">The absolute lowest it will ever go — even on a slow Tuesday in January. This covers our costs.</td>
+      </tr>
+      <tr>
+        <td><strong>Maximum Price</strong></td>
+        <td class="val">$400/night</td>
+        <td class="note">The ceiling for once-in-a-lifetime events (like the July 4th 250th anniversary).</td>
+      </tr>
+      <tr>
+        <td><strong>Auto-Sync</strong></td>
+        <td class="val">ON</td>
+        <td class="note">PriceLabs pushes prices to Airbnb every day automatically. You don't need to click anything for this.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>The Smart Rules (Already Set Up)</h3>
+    <p>These are automatic rules that run in the background. You don't need to manage them — just know they're working:</p>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Weekend Premium: Fri/Sat gets +35% <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p>DC weekends are much busier than weekdays. This rule automatically bumps Friday and Saturday night prices by 35% above the weekday rate. So if a Tuesday is $155, Friday might be $209.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Last-Minute Discount: -15% within 3 days <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p>If a night is still empty and it's less than 3 days away, PriceLabs drops the price 15% to try to fill it. An empty night earns $0, so even a discounted booking is better.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Far-Out Premium: +10% for bookings 60+ days away <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p>People who book 2+ months ahead are planners — they're usually less price-sensitive. This charges them a little more, and we can always drop the price later if the date doesn't fill.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Gap Filler: -20% for orphan 1–2 night gaps <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p>If someone books Mon–Wed and someone else books Fri–Sun, Thursday is "orphaned." This rule drops that lonely night's price by 20% so it actually gets booked instead of sitting empty.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Length-of-Stay Discounts <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p><strong>7+ nights:</strong> 20% discount — great for tourists on long trips.<br>
+        <strong>28+ nights:</strong> 35% discount — targets government interns, contractors, and people relocating to DC. These are our most profitable guests because there's less turnover and cleaning.</p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button class="acc-trigger" onclick="toggleAcc(this)">Occupancy-Based Adjustments <span class="arrow">▼</span></button>
+      <div class="acc-panel">
+        <p>If the month is filling up fast (over 70% booked), PriceLabs automatically raises prices on the remaining nights by 5–15%. Simple supply and demand — fewer available nights = charge more.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <h3>The One Thing PriceLabs Can't Do Alone</h3>
+    <p>PriceLabs is smart, but it doesn't know about every DC event. For the <strong>biggest events</strong> (July 4th, Capital Pride, major concerts), we manually set "override" prices — specific prices we lock in so the algorithm doesn't underprice them. These are already set for 2026, but when big events are announced for 2027, we'll need to add new overrides.</p>
+    <p>This is covered in the <strong>Pricing Calendar</strong> tab.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Your role with PriceLabs:</strong> You don't need to log into PriceLabs every day. It runs on autopilot. Your main job is the <strong>monthly check-in</strong> (covered in the Monthly Routine tab) to make sure our base price is still right and upcoming events have overrides set.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 3: PRICING CALENDAR
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="pricing-calendar">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>2026 Pricing Calendar</h2>
+    <p>What to charge each month and which events to watch. 2026 is special — it's America's 250th birthday, and DC is ground zero.</p>
+  </div>
+
+  <div class="month-grid">
+    <div class="month-card highlight">
+      <h4>April — Peak Season</h4>
+      <div class="detail"><strong>Cherry Blossom Festival</strong> (Mar 20 – Apr 12)</div>
+      <div class="detail">Weeknights: $150–180 &nbsp;|&nbsp; Weekends: $220–270</div>
+      <div class="detail">Occupancy target: 85–90%</div>
+      <div class="target">This is DC's #1 tourist event</div>
+    </div>
+
+    <div class="month-card highlight">
+      <h4>May — Peak Season</h4>
+      <div class="detail"><strong>Memorial Day weekend</strong> → $280–300/night</div>
+      <div class="detail">Weeknights: $160–190 &nbsp;|&nbsp; Weekends: $230–280</div>
+      <div class="detail">Intern season begins — push weekly discounts</div>
+      <div class="target">Memorial Day = 3-night minimum</div>
+    </div>
+
+    <div class="month-card highlight">
+      <h4>June — Peak Season</h4>
+      <div class="detail"><strong>Capital Pride</strong> (Jun 12–21) → $250–280/night</div>
+      <div class="detail"><strong>Great American State Fair</strong> starts Jun 25</div>
+      <div class="detail">Peak intern/contractor season</div>
+      <div class="target">Pride week is huge for bookings</div>
+    </div>
+
+    <div class="month-card highlight" style="border-color: var(--danger);">
+      <h4>July — Biggest Month of the Year</h4>
+      <div class="detail"><strong>July 4th Semiquincentennial</strong> — America's 250th!</div>
+      <div class="detail">Jul 1–6: <strong>$320–335/night, 3-night minimum</strong></div>
+      <div class="detail">Weeknights: $190–230 &nbsp;|&nbsp; Weekends: $270–335</div>
+      <div class="target" style="color: var(--danger);">Once-in-a-generation event. Don't underprice!</div>
+    </div>
+
+    <div class="month-card">
+      <h4>August — High Season</h4>
+      <div class="detail"><strong>Foo Fighters + MCR</strong> (Aug 17–18) → $220–240</div>
+      <div class="detail">Weeknights: $140–165 &nbsp;|&nbsp; Weekends: $190–230</div>
+      <div class="detail">Good month for 7-night intern stays</div>
+      <div class="target">Back-to-back concerts = price boost</div>
+    </div>
+
+    <div class="month-card">
+      <h4>September — High Season</h4>
+      <div class="detail"><strong>DC JazzFest</strong> (Sep 5–6) → $210–240</div>
+      <div class="detail"><strong>Patriot Games</strong> (Sep 1 – Nov 2)</div>
+      <div class="detail">Fall tourism + contractor season</div>
+      <div class="target">Push monthly rates for contractors</div>
+    </div>
+
+    <div class="month-card">
+      <h4>October — High Season</h4>
+      <div class="detail"><strong>Columbus Day</strong> (Oct 10–12) → $200–220</div>
+      <div class="detail"><strong>Hirshhorn Sculpture Garden</strong> reopens</div>
+      <div class="detail">Fall foliage draws romantic getaways</div>
+      <div class="target">Position as "fall foliage + monuments"</div>
+    </div>
+
+    <div class="month-card">
+      <h4>November — Slower</h4>
+      <div class="detail"><strong>Thanksgiving</strong> (Nov 26–29) → $185–200</div>
+      <div class="detail">Veterans Day events (Nov 11)</div>
+      <div class="detail">Push longer stays at bigger discounts</div>
+      <div class="target">30% weekly discount, 3-night min on holidays</div>
+    </div>
+
+    <div class="month-card">
+      <h4>December — Slower</h4>
+      <div class="detail"><strong>National Christmas Tree</strong> lighting</div>
+      <div class="detail">ZooLights, holiday markets</div>
+      <div class="detail">New Year's Dec 26–31 → $190–210</div>
+      <div class="target">Pitch "DC Christmas experience"</div>
+    </div>
+
+    <div class="month-card" style="background: var(--cream-dark);">
+      <h4>January – February — Slow Season</h4>
+      <div class="detail">Lowest demand of the year (avg ~34% occupancy)</div>
+      <div class="detail">Price floor: $115–140/night</div>
+      <div class="detail">Push 28+ night stays at 35% discount</div>
+      <div class="target">Consider listing on Furnished Finder for 30-day rentals</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>How overrides work:</strong> For the big events above, we've set "date-specific overrides" in PriceLabs — meaning we manually locked in a minimum price for those exact dates. PriceLabs won't go below our override. If you hear about a new big event, add an override in PriceLabs under <strong>Pricing Customizations → Date-Specific Overrides</strong>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 4: COMMAND CENTER
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="command-center">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>The Command Center</h2>
+    <p>Our custom dashboard that puts everything in one place — open <strong>command_center.html</strong> in your browser.</p>
+  </div>
+
+  <div class="card">
+    <h3>What Is It?</h3>
+    <p>The Command Center is an HTML file that lives on our computer. You open it in Chrome or Safari just like a website. It's a <strong>single dashboard</strong> that shows you revenue, occupancy, pricing, upcoming bookings, market data, and action items — all in one place, so you don't need to bounce between Airbnb, PriceLabs, and spreadsheets.</p>
+    <p>It's password-protected (use the code Cesar set up). Once you're in, you'll see several sections:</p>
+  </div>
+
+  <div class="card">
+    <h3>What You'll See Inside</h3>
+
+    <div class="step">
+      <div class="step-num-inline">1</div>
+      <div class="step-body">
+        <h4>Score Cards (top of page)</h4>
+        <p>Four big numbers at a glance: <strong>Revenue</strong> (how much we earned this month), <strong>Occupancy</strong> (what % of nights are booked), <strong>ADR</strong> (average nightly rate), and <strong>Rating</strong>. Each card is color-coded — green means on track, yellow means watch it, red means we need to act.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-inline">2</div>
+      <div class="step-body">
+        <h4>Revenue Chart</h4>
+        <p>A month-by-month chart showing our income trend and how it compares to the $3,800/month target. You can quickly see if we're growing or if a month dipped.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-inline">3</div>
+      <div class="step-body">
+        <h4>Event Calendar</h4>
+        <p>Lists upcoming DC events with the price we should be charging. Events with a red left border mean we haven't set an override yet — that's your signal to act. Checkmarks mean the override is already set in PriceLabs.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-inline">4</div>
+      <div class="step-body">
+        <h4>Market Position</h4>
+        <p>Shows how our listing compares to other DC listings — our nightly rate vs. the market median, our rating vs. average, etc. This helps you know if we're pricing too high, too low, or just right.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-inline">5</div>
+      <div class="step-body">
+        <h4>Revenue Simulator</h4>
+        <p>A slider tool where you can play with different ADR and occupancy numbers to see what our monthly income would be. Helpful for thinking about "what if we raised the base price $10?"</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-inline">6</div>
+      <div class="step-body">
+        <h4>Quick Links Bar</h4>
+        <p>At the very top, there's a row of buttons that take you directly to Airbnb, PriceLabs, and other tools — so you're never more than one click away from whatever you need.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-warning">
+    <h3>Important: The Data Doesn't Update Itself</h3>
+    <p>The Command Center is a local HTML file — it doesn't automatically pull data from Airbnb. Once a month, you (or Cesar) need to update the numbers inside the file. This is a quick 5-minute job covered in the <strong>Monthly Routine</strong> tab.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 4.5: CLEANING FEES
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="cleaning-fees">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Cleaning Fees &amp; How They Factor In</h2>
+    <p>The prices in our calendar are the <em>nightly rate only</em>. Here's how cleaning fees work on top of that.</p>
+  </div>
+
+  <div class="card">
+    <h3>How Guests See It</h3>
+    <p>When a guest searches on Airbnb, they see two things: the <strong>nightly rate</strong> (what PriceLabs sets) and the <strong>cleaning fee</strong> (a flat fee added once per stay, no matter how many nights). So a 3-night stay at $155/night + $75 cleaning fee = <strong>$540 total</strong> before Airbnb's service fees.</p>
+    <p>This is important because the total price — not just the nightly rate — is what the guest decides on. A high cleaning fee on a short stay can make us look expensive even if the nightly rate is fair.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Our Cleaning Fee Strategy</h3>
+    <p>The cleaning fee is set on <strong>Airbnb directly</strong> (not in PriceLabs). PriceLabs knows about our cleaning fee and factors it into the total guest price when it sets nightly rates, but it doesn't change the cleaning fee itself.</p>
+    <table class="nice-table">
+      <tr><th>Approach</th><th>Recommendation</th><th>Why</th></tr>
+      <tr>
+        <td><strong>Current cleaning fee</strong></td>
+        <td class="val">$75</td>
+        <td class="note">This is roughly what we're charging now (ranges from $50–$100 in past bookings). $75 is fair for a professional clean of a 1BR.</td>
+      </tr>
+      <tr>
+        <td><strong>Short stays (1–2 nights)</strong></td>
+        <td class="val">Keep at $75</td>
+        <td class="note">The cleaning effort is the same whether someone stays 1 night or 2. Don't discount it. But know that this makes our total price per night higher for short stays — that's fine, it discourages unprofitable 1-night bookings.</td>
+      </tr>
+      <tr>
+        <td><strong>Long stays (7+ nights)</strong></td>
+        <td class="val">$75 is fine — it becomes negligible</td>
+        <td class="note">$75 spread over 7 nights = only $10.70/night extra. Over 28 nights it's $2.68/night. The longer the stay, the less the cleaning fee matters.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>The Math That Matters: Total Guest Price</h3>
+    <p>Here's what a guest actually pays for different stay lengths at a $155/night rate with a $75 cleaning fee:</p>
+    <table class="nice-table">
+      <tr><th>Stay Length</th><th>Nightly Rate</th><th>+ Cleaning Fee</th><th>Effective $/Night</th></tr>
+      <tr>
+        <td>1 night</td>
+        <td>$155</td>
+        <td>$75</td>
+        <td class="val">$230/night</td>
+      </tr>
+      <tr>
+        <td>2 nights</td>
+        <td>$310</td>
+        <td>$75</td>
+        <td class="val">$192/night</td>
+      </tr>
+      <tr>
+        <td>3 nights</td>
+        <td>$465</td>
+        <td>$75</td>
+        <td class="val">$180/night</td>
+      </tr>
+      <tr>
+        <td>7 nights</td>
+        <td>$1,085</td>
+        <td>$75</td>
+        <td class="val">$166/night</td>
+      </tr>
+      <tr>
+        <td>28 nights</td>
+        <td>$4,340</td>
+        <td>$75</td>
+        <td class="val">$158/night</td>
+      </tr>
+    </table>
+    <p style="margin-top: 12px; font-size: 14px; color: var(--text-secondary);">This is <em>before</em> Airbnb adds their guest service fee (typically 14%). So a guest booking 2 nights really sees about $219/night all-in.</p>
+  </div>
+
+  <div class="card card-warning">
+    <h3>When to Revisit the Cleaning Fee</h3>
+    <p>If we're getting lots of views but very few bookings on short stays (1–2 nights), our total price might be scaring people off. In that case, we could <strong>lower the cleaning fee to $50</strong> and bump the base nightly rate up by $10 to compensate. This "hides" more of the cost in the nightly rate, which looks better in search results.</p>
+    <p>But don't do this unless we're actually seeing a problem — $75 is standard for DC.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Key takeaway:</strong> The prices you see in the Pricing Calendar are nightly rates only. The guest pays that <em>plus</em> a $75 cleaning fee <em>plus</em> Airbnb's service fee. PriceLabs already knows about our cleaning fee and factors it into its pricing decisions — so you don't need to do any extra math.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 6: DAILY ROUTINE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="daily">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Your Daily Routine</h2>
+    <p>This should take about 5–10 minutes. Most days, there's nothing to do.</p>
+  </div>
+
+  <div class="card">
+    <h3>Every Day (5 minutes)</h3>
+    <ul class="checklist">
+      <li><strong>Check Airbnb messages</strong> — Reply to every guest inquiry within 1 hour if possible. Our response rate needs to stay above 90% for Superhost. Set phone notifications so you don't miss them.</li>
+      <li><strong>Accept or decline booking requests</strong> — Accept as many as possible, especially in the early months. Declining hurts our search ranking.</li>
+      <li><strong>Glance at incoming bookings</strong> — If a new booking comes in, just note the dates and rate. Does the rate look right for that time period? If it looks way too low for a peak date, it might mean we need to add an override.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>On Guest Check-In Days</h3>
+    <ul class="checklist">
+      <li><strong>Send the check-in message</strong> — 1 hour after check-in time, send: "Hi [Name]! Hope you arrived safely. WiFi password is [password], TV remote is on the coffee table. Let me know if anything is unclear!"</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>On Day 2 of a Guest Stay</h3>
+    <ul class="checklist">
+      <li><strong>Send the mid-stay check-in</strong> — "Hi [Name]! Just checking in — is everything going well? Anything I can help with? Enjoy DC!" This little touch leads to better reviews.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>On Guest Check-Out Days</h3>
+    <ul class="checklist">
+      <li><strong>Send the checkout message</strong> — "Hope you had a wonderful stay! If you enjoyed it, a review would mean the world to us." Reviews are our lifeblood.</li>
+      <li><strong>Leave a review for the guest</strong> — Even a short one. Guests see you reviewed them and are more likely to review you back.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>What you DON'T need to do daily:</strong> You don't need to check PriceLabs, adjust prices, or update the Command Center every day. PriceLabs handles pricing automatically. Your daily job is just <strong>guest communication</strong>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 7: MONTHLY ROUTINE
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="monthly">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>Your Monthly Routine</h2>
+    <p>Do this on the 1st of every month. Takes about 30–45 minutes.</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 1: Pull Last Month's Numbers (10 min)</h3>
+    <div class="step">
+      <div class="step-num-inline">a</div>
+      <div class="step-body">
+        <p>Log into <strong>Airbnb → Earnings → Transaction History</strong>. Set the date range to last month (e.g., March 1–31). Note the <strong>total gross revenue</strong> and <strong>total net payout</strong>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num-inline">b</div>
+      <div class="step-body">
+        <p>Count the <strong>number of booked nights</strong> from the calendar. Divide by 30 (or 31) to get your <strong>occupancy rate</strong>. Example: 21 booked nights ÷ 30 = 70%.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num-inline">c</div>
+      <div class="step-body">
+        <p>Divide gross revenue by booked nights to get your <strong>average daily rate (ADR)</strong>. Example: $3,200 ÷ 21 nights = $152/night.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step 2: Review the Scorecard (5 min)</h3>
+    <p>Compare last month's numbers to these targets:</p>
+    <table class="nice-table">
+      <tr><th>Metric</th><th>Target</th><th>What to Do if Off</th></tr>
+      <tr>
+        <td><strong>Revenue</strong></td>
+        <td class="val">$3,800/month</td>
+        <td class="note">If below $2,500, our base price or occupancy is too low</td>
+      </tr>
+      <tr>
+        <td><strong>Occupancy</strong></td>
+        <td class="val">70%+</td>
+        <td class="note">Below 55%? Drop base price by $10. Above 85%? Raise it by $10.</td>
+      </tr>
+      <tr>
+        <td><strong>ADR</strong></td>
+        <td class="val">$155+</td>
+        <td class="note">If below $140, our prices are too low — check if events were underpriced</td>
+      </tr>
+      <tr>
+        <td><strong>Rating</strong></td>
+        <td class="val">4.8+</td>
+        <td class="note">Read recent reviews for patterns. If anything dips, fix that issue immediately</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Step 3: Check Upcoming Events (10 min)</h3>
+    <p>Look at the next 60 days. Are there any big DC events coming up? Check the Pricing Calendar tab in this guide, and also check <a href="https://washington.org" target="_blank" style="color: var(--brand-blue);">washington.org</a> for newly announced events.</p>
+    <p>For each big event, make sure there's a <strong>date-specific override</strong> in PriceLabs with the right price. If there isn't one, add it:</p>
+    <p style="margin-left: 16px; font-size: 14px; color: var(--text-secondary);">PriceLabs → your listing → <strong>Pricing Customizations</strong> → <strong>Date-Specific Overrides</strong> → Add the dates and the price from our calendar.</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 4: Adjust Base Price If Needed (5 min)</h3>
+    <p>This is the single most impactful thing you can do each month. Based on last month's occupancy:</p>
+    <table class="nice-table">
+      <tr><th>If Occupancy Was…</th><th>Do This</th></tr>
+      <tr>
+        <td><strong>Below 55%</strong></td>
+        <td>Lower the base price by $5–10 in PriceLabs</td>
+      </tr>
+      <tr>
+        <td><strong>55–75%</strong></td>
+        <td>Keep the base price where it is — we're in a healthy range</td>
+      </tr>
+      <tr>
+        <td><strong>Above 80%</strong></td>
+        <td>Raise the base price by $5–10 — we're probably underpriced</td>
+      </tr>
+    </table>
+    <p style="margin-top: 12px; font-size: 14px; color: var(--text-secondary);">To change it: PriceLabs → your listing → <strong>Base Price</strong> → type the new number → Save.</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 5: Update the Command Center (10 min)</h3>
+    <p>Open <strong>command_center.html</strong> in a text editor (like TextEdit on Mac — right-click → Open With → TextEdit). Near the top of the code, you'll see a section called <code>MONTHLY_DATA</code>. Here's exactly what to update:</p>
+    <table class="nice-table">
+      <tr><th>What to Update</th><th>Where to Get It</th><th>Example</th></tr>
+      <tr>
+        <td><strong>paid</strong></td>
+        <td class="note">Airbnb → Earnings → total net payout for the month</td>
+        <td class="val">1856</td>
+      </tr>
+      <tr>
+        <td><strong>upcoming</strong></td>
+        <td class="note">Set to 0 once the month is over (it was for future projections)</td>
+        <td class="val">0</td>
+      </tr>
+      <tr>
+        <td><strong>total</strong></td>
+        <td class="note">Same as "paid" for completed months</td>
+        <td class="val">1856</td>
+      </tr>
+    </table>
+    <p style="margin-top: 12px;">You'll also see a section called <code>MONTHLY_DETAILS</code> — add a row for the month with:</p>
+    <table class="nice-table">
+      <tr><th>Field</th><th>Where to Get It</th></tr>
+      <tr><td><strong>adr</strong></td><td class="note">Gross revenue ÷ booked nights (you calculated this in Step 1)</td></tr>
+      <tr><td><strong>occupancy</strong></td><td class="note">Booked nights ÷ days in month, as a decimal (e.g., 0.70 for 70%)</td></tr>
+      <tr><td><strong>bookings</strong></td><td class="note">Count of separate reservations that month</td></tr>
+      <tr><td><strong>rating</strong></td><td class="note">Your current overall rating on Airbnb</td></tr>
+    </table>
+    <p style="margin-top: 12px; font-size: 14px; color: var(--text-secondary);">That's it — just those numbers. The dashboard calculates everything else (charts, trends, comparisons) automatically from this data. If you're not comfortable editing the file, just write the numbers down and Cesar can plug them in — it takes 2 minutes.</p>
+  </div>
+
+  <div class="card">
+    <h3>Step 6: Quick Listing Refresh (5 min)</h3>
+    <ul class="checklist">
+      <li>Update the listing description to mention the <strong>current season</strong> or <strong>upcoming events</strong> ("Stay during Capital Pride — walk to the parade!")</li>
+      <li>Rearrange photos if needed — the <strong>first photo</strong> drives the most clicks</li>
+      <li>Respond to any reviews you haven't replied to yet</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>That's it!</strong> Six steps, once a month. The most important ones are Steps 3 (event overrides) and 4 (base price adjustment). Everything else is bonus polish.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 8: WHEN TO PIVOT
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="when-to-pivot">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2>Are the Prices Too High? When to Pivot</h2>
+    <p>This is the most important question. Here's a clear framework so you always know whether to stay the course or adjust.</p>
+  </div>
+
+  <div class="card">
+    <h3>First: Why the Prices Feel High</h3>
+    <p>If you're used to seeing us charge $133–150/night for everything, then yes — $200+ on a Friday or $320 for July 4th feels like a lot. But here's the thing: <strong>we were undercharging</strong>. The DC median for a 1-bedroom is $146/night, and that's the <em>average</em> — it includes slow Tuesdays in January. Weekend rates and event rates in DC routinely hit $200–300 for comparable listings.</p>
+    <p>Our 5.0 rating across 64 reviews puts us in the top tier of DC listings. We shouldn't be pricing like a budget option.</p>
+    <p>That said, if the market tells us we're wrong, we listen. Here's how to read the signals.</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>The 30-Day Test</h3>
+    <p>Give the new prices <strong>at least 30 full days</strong> before drawing conclusions. Why? Because Airbnb bookings don't happen instantly — most guests book 2–4 weeks ahead. If we raise prices today, the bookings (or lack thereof) from that change won't show up for several weeks.</p>
+    <p>Here's the timeline:</p>
+    <table class="nice-table">
+      <tr><th>When</th><th>What to Look At</th><th>What's Normal</th></tr>
+      <tr>
+        <td><strong>Days 1–14</strong></td>
+        <td>Views and saved listings on Airbnb</td>
+        <td class="note">Views might dip slightly — that's OK. Airbnb sometimes shows us less while adjusting to new prices. Don't panic.</td>
+      </tr>
+      <tr>
+        <td><strong>Days 15–30</strong></td>
+        <td>New bookings for 2–6 weeks out</td>
+        <td class="note">This is where you start to see real signal. Are bookings still coming in? Even 2–3 new bookings in this window is healthy.</td>
+      </tr>
+      <tr>
+        <td><strong>Day 30</strong></td>
+        <td>Occupancy for the next 30 days</td>
+        <td class="note">This is your verdict. Check the number below.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-danger">
+    <h3>The Pivot Signals — When to Lower Prices</h3>
+    <p>Lower the base price by $10 if <strong>any</strong> of these are true after 30 days:</p>
+    <table class="nice-table">
+      <tr><th>Signal</th><th>Threshold</th><th>What to Do</th></tr>
+      <tr>
+        <td><strong>Occupancy for next 30 days</strong></td>
+        <td class="val">Below 40%</td>
+        <td class="note">Drop base price by $10 in PriceLabs. Wait another 14 days. If still below 40%, drop another $10.</td>
+      </tr>
+      <tr>
+        <td><strong>Zero new bookings</strong></td>
+        <td class="val">14+ days with nothing</td>
+        <td class="note">Check if it's a seasonal thing (Jan/Feb are naturally slow). If it's April–October and we're getting nothing, prices are likely too high.</td>
+      </tr>
+      <tr>
+        <td><strong>Lots of views, no bookings</strong></td>
+        <td class="val">200+ views, 0–1 bookings in 30 days</td>
+        <td class="note">People are looking but not buying. Price is the likely culprit. Drop base price by $5–10 or lower the cleaning fee to $50.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card card-success">
+    <h3>The Stay-the-Course Signals</h3>
+    <p>Keep prices where they are (or even raise them!) if you see:</p>
+    <table class="nice-table">
+      <tr><th>Signal</th><th>What It Means</th></tr>
+      <tr>
+        <td><strong>Occupancy above 55% for next 30 days</strong></td>
+        <td class="note">Healthy. Guests are booking at our higher prices. The strategy is working.</td>
+      </tr>
+      <tr>
+        <td><strong>Occupancy above 80%</strong></td>
+        <td class="note">We're actually <em>too cheap</em>. Raise the base price $10. If everything fills, we left money on the table.</td>
+      </tr>
+      <tr>
+        <td><strong>Bookings coming in 3–6 weeks ahead</strong></td>
+        <td class="note">Advance bookings mean confidence in our listing. People plan around our price — great sign.</td>
+      </tr>
+      <tr>
+        <td><strong>Higher revenue even with fewer nights booked</strong></td>
+        <td class="note">This is the goal. 18 nights at $180/night ($3,240) beats 25 nights at $135/night ($3,375) because there's less cleaning, less wear, and less work — and the numbers are similar.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>The Quick-Check Cheat Sheet</h3>
+    <p>Open the Airbnb app, go to your calendar, and count booked nights in the next 30 days:</p>
+    <table class="nice-table">
+      <tr><th>Booked Nights (Next 30 Days)</th><th>Verdict</th><th>Action</th></tr>
+      <tr>
+        <td class="val">0–8 nights (under 27%)</td>
+        <td style="color: var(--danger); font-weight: 700;">Trouble</td>
+        <td class="note">Drop base price $10, check if dates have overrides that are too high</td>
+      </tr>
+      <tr>
+        <td class="val">9–15 nights (30–50%)</td>
+        <td style="color: var(--warning); font-weight: 700;">Watch</td>
+        <td class="note">Give it one more week. If no improvement, drop by $5</td>
+      </tr>
+      <tr>
+        <td class="val">16–21 nights (53–70%)</td>
+        <td style="color: var(--success); font-weight: 700;">Healthy</td>
+        <td class="note">Stay the course — this is right where we want to be</td>
+      </tr>
+      <tr>
+        <td class="val">22+ nights (73%+)</td>
+        <td style="color: var(--brand-blue); font-weight: 700;">Raise prices</td>
+        <td class="note">We're underpriced. Bump base by $5–10.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <strong>Remember:</strong> PriceLabs is already handling the daily adjustments. Your job is just the monthly gut check: look at next-30-day occupancy, and nudge the base price $5–10 in the right direction. Small moves, not big swings. And always give changes at least 2 weeks to take effect before changing again.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TAB 9: GLOSSARY
+     ═══════════════════════════════════════════════════════════ -->
+<div class="section" id="glossary">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <h2>Quick Glossary</h2>
+    <p>Terms you'll see in PriceLabs, on Airbnb, and in the Command Center.</p>
+  </div>
+
+  <div class="card">
+    <table class="nice-table">
+      <tr><th>Term</th><th>What It Means</th></tr>
+      <tr>
+        <td><strong>ADR</strong></td>
+        <td>Average Daily Rate — the average price per night we actually received. Total revenue ÷ booked nights.</td>
+      </tr>
+      <tr>
+        <td><strong>Occupancy Rate</strong></td>
+        <td>The percentage of available nights that were booked. 21 booked nights out of 30 = 70% occupancy.</td>
+      </tr>
+      <tr>
+        <td><strong>Base Price</strong></td>
+        <td>The starting point PriceLabs uses. It adjusts up or down from this number. Think of it as your "normal Tuesday night" price.</td>
+      </tr>
+      <tr>
+        <td><strong>Override</strong></td>
+        <td>A price you manually lock in for specific dates. PriceLabs won't go below this. Used for big events.</td>
+      </tr>
+      <tr>
+        <td><strong>Min Stay</strong></td>
+        <td>The minimum number of nights a guest must book. Set higher during peak events to avoid short stays taking up prime dates.</td>
+      </tr>
+      <tr>
+        <td><strong>Orphan Night</strong></td>
+        <td>A lonely 1–2 night gap between two bookings. Hard to fill, so we discount them.</td>
+      </tr>
+      <tr>
+        <td><strong>Seasonal Profile</strong></td>
+        <td>PriceLabs settings that adjust your base price for each month/season. April might be +40%, January might be -15%.</td>
+      </tr>
+      <tr>
+        <td><strong>Superhost</strong></td>
+        <td>Airbnb badge for top hosts. Requires: 4.8+ rating, 90% response rate, 10+ stays/year, less than 1% cancellations. We currently have it!</td>
+      </tr>
+      <tr>
+        <td><strong>Instant Book</strong></td>
+        <td>Lets guests book without you having to manually approve. Faster bookings = higher search ranking.</td>
+      </tr>
+      <tr>
+        <td><strong>RevPAN</strong></td>
+        <td>Revenue Per Available Night — total revenue ÷ total nights in the month (booked or not). A better measure than ADR because it accounts for empty nights.</td>
+      </tr>
+      <tr>
+        <td><strong>Pacing</strong></td>
+        <td>How quickly bookings are coming in compared to the same time last month/year. If May is 60% booked and it's only April 10, pacing is strong.</td>
+      </tr>
+      <tr>
+        <td><strong>Comp Set</strong></td>
+        <td>Comparable listings in our area — what we compete against. PriceLabs looks at these to set our prices.</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>Thirteen4Six</span>
+</div>
+
+<script>
+/* ═══ TAB NAVIGATION ═══ */
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+/* ═══ ACCORDION ═══ */
+function toggleAcc(trigger) {
+  const panel = trigger.nextElementSibling;
+  const isOpen = panel.classList.contains('open');
+  // close all
+  document.querySelectorAll('.acc-panel').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.acc-trigger').forEach(t => t.classList.remove('open'));
+  if (!isOpen) {
+    panel.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>

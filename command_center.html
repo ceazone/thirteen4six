@@ -1606,6 +1606,7 @@ body {
   </div>
   <div class="header-right">
     <span class="header-date" id="today-date"></span>
+    <span class="header-date" id="data-source-indicator" style="font-size:12px;color:var(--text-muted);">Data: loading...</span>
     <div class="phase-pill">Phase 1 — Foundation</div>
   </div>
 </header>
@@ -1640,17 +1641,9 @@ body {
     View Listing
   </a>
   <div class="ql-divider"></div>
-  <a href="listing_comparison.html" target="_blank" class="ql-btn" aria-label="Open Listing Copy tool">
+  <a href="ashas_guide.html" target="_blank" class="ql-btn" aria-label="Open Asha's Guide">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Listing Copy
-  </a>
-  <a href="title_focus_group.html" target="_blank" class="ql-btn" aria-label="Open Title Research tool">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    Title Research
-  </a>
-  <a href="pricelabs_setup_and_insights.html" target="_blank" class="ql-btn" aria-label="Open PriceLabs Setup guide">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    PriceLabs Setup
+    Asha's Guide
   </a>
 </nav>
 
@@ -1664,14 +1657,37 @@ body {
   <h1 class="page-title">Revenue Dashboard</h1>
   <p class="page-subtitle">Private DC Suite · Columbia Heights · March 2026 Data</p>
 
+  <!-- Data Loading Banner -->
+  <div class="alert-banner" id="data-loading-banner" style="display:none;background:var(--cream);border-color:var(--text-muted);">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;transform-origin:center;@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"><circle cx="12" cy="12" r="9" stroke="currentColor" fill="none" stroke-width="2"/><path d="M12 3a9 9 0 0 1 0 18" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    <span>Syncing data from Google Sheet...</span>
+  </div>
+
+  <!-- Data Error Banner -->
+  <div class="alert-banner" id="data-error-banner" style="display:none;">
+  </div>
+
   <!-- Alert -->
   <div class="alert-banner">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    <span><strong>How to update:</strong> Edit the data block at the bottom of this file. Each value has a comment explaining what it is and where to find it. Monthly refresh takes ~5 minutes.</span>
+    <span><strong>How to update:</strong> Data automatically syncs from Google Sheet. You can also manually edit the data block at the bottom of this file. Monthly refresh takes ~5 minutes.</span>
   </div>
 
   <!-- ── Score Cards ──────────────────────────────────────── -->
   <div class="scores" id="score-cards"></div>
+
+  <!-- ── Pivot Signals Card ────────────────────────────────── -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <span class="card-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        Pivot Signals
+      </span>
+    </div>
+    <div class="card-body">
+      <div id="pivot-signals"></div>
+    </div>
+  </div>
 
   <!-- ── Main Grid ────────────────────────────────────────── -->
   <div class="grid">
@@ -1923,13 +1939,144 @@ body {
 // ── PASSWORD ────────────────────────────────────────────────
 // Change this to your desired password.
 // For production, consider a hash-based approach.
-const GATE_PASSWORD = "thirteen4six";
+// Set your password here — don't commit the real one to a public repo.
+const GATE_PASSWORD = localStorage.getItem('t46_pw') || "CHANGE_ME";
+
+// ── GOOGLE SHEET CSV INTEGRATION ────────────────────────────
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThVkBYJMMlB9yQfxqvfXMMmCbSDI-YRs7SND8dwPDtE2Y7jAFrlraieDrbvrKvV1ttLRaKq4sOYQ02/pub?output=csv';
+let DATA_SOURCE = 'fallback'; // 'fallback' | 'sheet'
+
+// Simple CSV parser function
+function parseCSV(csvText) {
+  const lines = csvText.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim());
+  const data = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const values = lines[i].split(',').map(v => v.trim());
+    const row = {};
+    headers.forEach((h, idx) => {
+      row[h] = values[idx];
+    });
+    data.push(row);
+  }
+  return data;
+}
+
+// Fetch and transform CSV data
+async function fetchSheetData() {
+  const loadingBanner = document.getElementById('data-loading-banner');
+  if (loadingBanner) loadingBanner.style.display = 'flex';
+
+  try {
+    const response = await fetch(SHEET_CSV_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+
+    // Transform CSV rows into data structures
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    MONTHLY_DATA.length = 0; // Clear existing
+    MONTHLY_DETAILS = {}; // Reset
+
+    rows.forEach((row, idx) => {
+      if (idx >= 12) return; // Only 12 months
+      const month = months[idx];
+      const paid = parseFloat(row['Paid Revenue']) || 0;
+      const upcoming = parseFloat(row['Upcoming Revenue']) || 0;
+      const nightsBooked = parseInt(row['Nights Booked']) || 0;
+      const daysInMonth = parseInt(row['Days in Month']) || 1;
+
+      // MONTHLY_DATA entry
+      MONTHLY_DATA.push({
+        month: month,
+        paid: paid,
+        upcoming: upcoming,
+        total: paid + upcoming,
+        target: 3800
+      });
+
+      // MONTHLY_DETAILS entry
+      MONTHLY_DETAILS[month] = {
+        adr: parseFloat(row['ADR']) || 0,
+        occupancy: daysInMonth > 0 ? nightsBooked / daysInMonth : 0,
+        bookings: parseInt(row['Bookings']) || 0,
+        reviewsAdded: parseInt(row['New Reviews']) || 0,
+        rating: parseFloat(row['Rating']) || 0,
+        totalReviews: parseInt(row['Total Reviews']) || 0,
+        cleaningFeeCharged: parseFloat(row['Cleaning Fee Charged']) || 0,
+        cleaningCost: parseFloat(row['Cleaning Cost']) || 0,
+        marketADR: parseFloat(row['Market Avg ADR']) || 0,
+        marketOccupancy: parseFloat(row['Market Avg Occupancy']) || 0
+      };
+    });
+
+    // Update SCORE_CARDS from latest month with paid data
+    const latestMonth = MONTHLY_DATA.filter(m => m.paid > 0).pop();
+    if (latestMonth) {
+      const details = MONTHLY_DETAILS[latestMonth.month];
+      SCORE_CARDS[0].value = '$' + latestMonth.paid.toLocaleString('en-US', {maximumFractionDigits: 0});
+      SCORE_CARDS[0].sub = latestMonth.month + ' 2026 · net actual';
+      if (latestMonth.paid < latestMonth.target * 0.6) SCORE_CARDS[0].status = 'bad';
+      else if (latestMonth.paid < latestMonth.target) SCORE_CARDS[0].status = 'warn';
+      else SCORE_CARDS[0].status = 'ok';
+
+      if (details && details.adr > 0) {
+        SCORE_CARDS[1].value = '$' + Math.round(details.adr);
+        SCORE_CARDS[1].sub = 'Month actual';
+      }
+      if (details && details.occupancy > 0) {
+        SCORE_CARDS[2].value = Math.round(details.occupancy * 100) + '%';
+      }
+      if (details && details.rating > 0) {
+        SCORE_CARDS[3].value = details.rating.toFixed(1) + '★';
+        SCORE_CARDS[3].sub = details.totalReviews + ' reviews';
+      }
+    }
+
+    // Update MARKET_DATA from latest row with market data
+    const latestWithMarket = rows.filter(r => r['Market Avg ADR']).pop();
+    if (latestWithMarket) {
+      MARKET_DATA.adr.market = parseFloat(latestWithMarket['Market Avg ADR']) || MARKET_DATA.adr.market;
+      MARKET_DATA.occupancy.market = parseFloat(latestWithMarket['Market Avg Occupancy']) || MARKET_DATA.occupancy.market;
+    }
+
+    // Update SEASONAL_ADR from sheet data
+    SEASONAL_ADR.forEach((item, idx) => {
+      if (rows[idx]) {
+        const month = months[idx];
+        const rowData = rows.find(r => r['Month'] === month);
+        if (rowData) {
+          item.yours = parseFloat(rowData['ADR']) || item.yours;
+          item.market = parseFloat(rowData['Market Avg ADR']) || item.market;
+        }
+      }
+    });
+
+    DATA_SOURCE = 'sheet';
+    if (loadingBanner) loadingBanner.style.display = 'none';
+    renderAll();
+  } catch (error) {
+    console.error('CSV fetch failed:', error);
+    DATA_SOURCE = 'fallback';
+    const errorBanner = document.getElementById('data-error-banner');
+    if (errorBanner) {
+      errorBanner.style.display = 'flex';
+      errorBanner.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>Data sync issue:</strong> Using fallback data. Check your internet connection.</span>`;
+    }
+    if (loadingBanner) loadingBanner.style.display = 'none';
+    renderAll();
+  }
+}
 
 // ── MONTHLY REVENUE DATA ────────────────────────────────────
 // Source: Airbnb Earnings → Transaction History → Monthly totals
 // paid = money already received, upcoming = confirmed future bookings
 // target = $3,800/month goal
-const MONTHLY_DATA = [
+// Initialize with defaults; will be populated by CSV or fallback data
+let MONTHLY_DATA = [
   { month: "Jan",  paid: 262,   upcoming: 0,       total: 262,     target: 3800 },   // Actual — Airbnb income Jan 2026
   { month: "Feb",  paid: 301,   upcoming: 0,       total: 301,     target: 3800 },   // Actual — Airbnb income Feb 2026
   { month: "Mar",  paid: 1856,  upcoming: 0,       total: 1856,    target: 3800 },   // Actual — Airbnb income Mar 2026 (net)
@@ -1947,7 +2094,7 @@ const MONTHLY_DATA = [
 // ── MONTHLY DETAIL DATA ────────────────────────────────────
 // Granular per-month metrics for the report section.
 // Add a row for each month once you have actuals.
-const MONTHLY_DETAILS = {
+let MONTHLY_DETAILS = {
   Jan: { adr: 131,  occupancy: 0.07, bookings: 1, reviewsAdded: 0, rating: 5.0, totalReviews: 20 },
   Feb: { adr: 150,  occupancy: 0.07, bookings: 1, reviewsAdded: 0, rating: 5.0, totalReviews: 20 },
   Mar: { adr: 155,  occupancy: 0.39, bookings: 4, reviewsAdded: 2, rating: 5.0, totalReviews: 22 },
@@ -1955,7 +2102,7 @@ const MONTHLY_DETAILS = {
 
 // ── SCORE CARD DATA ─────────────────────────────────────────
 // Update these each month with the latest numbers
-const SCORE_CARDS = [
+let SCORE_CARDS = [
   {
     badge: "Revenue",
     value: "$1,856",
@@ -1988,8 +2135,8 @@ const SCORE_CARDS = [
 
 // ── MARKET DATA ─────────────────────────────────────────────
 // Source: PriceLabs Revenue Estimator Pro (April 2, 2026)
-// Based on 372 active 1BR Airbnb listings near 1346 Oak St NW
-const MARKET_DATA = {
+// Based on 372 active 1BR Airbnb listings in Columbia Heights, DC
+let MARKET_DATA = {
   source: "PriceLabs Revenue Estimator Pro",
   date: "April 2, 2026",
   annualRevenue: { p50: 22300, p25: 14000, p75: 30000 },
@@ -2017,7 +2164,7 @@ const MARKET_DATA = {
 // ── SEASONAL ADR DATA ───────────────────────────────────────
 // Source: dc_airbnb_playbook.md seasonal pricing tiers (midpoint of ranges)
 // Market estimates from PriceLabs 1BR median seasonality
-const SEASONAL_ADR = [
+let SEASONAL_ADR = [
   { month: "Jan", market: 85,  yours: 120 },
   { month: "Feb", market: 90,  yours: 130 },
   { month: "Mar", market: 110, yours: 155 },
@@ -2052,7 +2199,7 @@ const EVENTS = [
 ];
 
 // ── ACTION CHECKLIST ────────────────────────────────────────
-// Source: dc_airbnb_playbook.md + pricelabs_setup_and_insights.html
+// Source: DC Airbnb playbook + PriceLabs setup
 // group: "priority" (original 9), "phase1" (playbook weeks 1–2), "phase2" (playbook weeks 3–6)
 // done: true = pre-completed from playbook (✅ items). false = still todo.
 // dueDate: optional ISO date for deadline tracking.
@@ -2180,6 +2327,153 @@ function checkPassword() {
   return false;
 }
 
+// ── Pivot Signals Engine ────────────────────────────────────
+function generatePivotSignals() {
+  const signals = [];
+  const monthsWithData = Object.entries(MONTHLY_DETAILS).filter(([k,v]) => (v && (v.occupancy > 0 || MONTHLY_DATA.find(d => d.month === k && d.paid > 0))));
+
+  if (monthsWithData.length === 0) {
+    return { signals: [], verdict: 'neutral', message: 'Not enough data yet — check back after 2-3 months of tracking' };
+  }
+
+  const months = Object.keys(MONTHLY_DETAILS).map(m => m.toUpperCase());
+  let redCount = 0, yellowCount = 0, greenCount = 0;
+
+  // 1. Occupancy vs Market: If your occupancy is >15% below market for 2+ months
+  const lowOccMonths = monthsWithData.filter(([k,v]) => v && MONTHLY_DATA.find(d => d.month === k && v.occupancy > 0 && v.marketOccupancy > 0 && (v.marketOccupancy - v.occupancy) > 0.15)).length;
+  if (lowOccMonths >= 2) {
+    signals.push({ icon: '⚠', text: 'Your occupancy is 15%+ below market average — consider lowering prices', type: 'caution' });
+    yellowCount++;
+  } else if (monthsWithData.length > 0) {
+    const latest = monthsWithData[monthsWithData.length - 1][1];
+    if (latest && latest.occupancy > 0.70) {
+      signals.push({ icon: '✓', text: 'Strong occupancy — keep current pricing strategy', type: 'good' });
+      greenCount++;
+    }
+  }
+
+  // 2. Revenue vs Target
+  const lowRevMonths = MONTHLY_DATA.filter(d => d.paid > 0 && d.paid < d.target * 0.6).length;
+  if (lowRevMonths >= 2) {
+    signals.push({ icon: '✕', text: 'Revenue below 60% of target for 2+ months — review pricing strategy', type: 'action' });
+    redCount++;
+  }
+
+  // 3. Rating Drop
+  const latestDetail = monthsWithData.length > 0 ? monthsWithData[monthsWithData.length - 1][1] : null;
+  if (latestDetail && latestDetail.rating && latestDetail.rating < 4.5) {
+    signals.push({ icon: '✕', text: `Rating dropped to ${latestDetail.rating.toFixed(1)} — check recent reviews for issues`, type: 'action' });
+    redCount++;
+  }
+
+  // 4. Cleaning Fee Net
+  if (latestDetail && latestDetail.bookings > 0) {
+    const cleaningNet = (latestDetail.cleaningFeeCharged - latestDetail.cleaningCost) * latestDetail.bookings;
+    if (cleaningNet < 0) {
+      signals.push({ icon: '✕', text: `Cleaning costs exceed fees by $${Math.abs(cleaningNet).toLocaleString()} — raise fee or reduce turnovers`, type: 'action' });
+      redCount++;
+    } else if (cleaningNet > 100) {
+      signals.push({ icon: '✓', text: `Cleaning profit: $${cleaningNet.toLocaleString()} — fees are well-optimized`, type: 'good' });
+      greenCount++;
+    }
+  }
+
+  // 5. ADR vs Market Premium with low occupancy
+  if (latestDetail && latestDetail.adr > 0 && latestDetail.marketADR > 0) {
+    const adrPremium = ((latestDetail.adr - latestDetail.marketADR) / latestDetail.marketADR);
+    if (adrPremium > 0.30 && latestDetail.occupancy < 0.50) {
+      signals.push({ icon: '⚠', text: `ADR is ${(adrPremium * 100).toFixed(0)}% above market but occupancy is ${(latestDetail.occupancy * 100).toFixed(0)}% — consider reducing prices`, type: 'caution' });
+      yellowCount++;
+    }
+  }
+
+  // 6. Positive signals
+  if (latestDetail && latestDetail.rating >= 4.8) {
+    signals.push({ icon: '✓', text: `Excellent rating of ${latestDetail.rating.toFixed(1)} — supports premium pricing`, type: 'good' });
+    greenCount++;
+  }
+
+  // 7. Overall verdict
+  let verdict = 'neutral';
+  if (redCount > 0) verdict = 'red';
+  else if (yellowCount > 0) verdict = 'yellow';
+  else if (greenCount > yellowCount) verdict = 'green';
+
+  return { signals, verdict };
+}
+
+// ── Master Render Function ──────────────────────────────────
+function renderAll() {
+  renderScoreCards();
+  renderChart();
+  renderMonthTable();
+  renderMarketCard();
+  renderSimulator();
+  renderSeasonalChart();
+  renderBookings();
+  renderPipeline();
+  renderEvents();
+  renderActionCenter();
+  renderMsgTabs();
+  renderMsgContent();
+  renderHouseRules();
+  renderReportPills();
+  renderReportContent();
+  renderPivotSignals();
+
+  // Update data source indicator
+  const indicator = document.getElementById('data-source-indicator');
+  if (indicator) {
+    if (DATA_SOURCE === 'sheet') {
+      indicator.textContent = 'Data: live from Google Sheet';
+      indicator.style.color = 'var(--success)';
+    } else {
+      indicator.textContent = 'Data: using cached fallback';
+      indicator.style.color = 'var(--text-muted)';
+    }
+  }
+}
+
+// ── Pivot Signals Renderer ──────────────────────────────────
+function renderPivotSignals() {
+  const container = document.getElementById('pivot-signals');
+  if (!container) return;
+
+  const { signals, verdict, message } = generatePivotSignals();
+
+  if (message) {
+    container.innerHTML = `<p style="text-align:center;color:var(--text-secondary);padding:24px;">${message}</p>`;
+    return;
+  }
+
+  let verdictBg = 'var(--success)';
+  let verdictText = 'GREEN';
+  if (verdict === 'red') { verdictBg = 'var(--danger)'; verdictText = 'RED'; }
+  else if (verdict === 'yellow') { verdictBg = 'var(--warning)'; verdictText = 'YELLOW'; }
+
+  let html = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:20px;height:20px;border-radius:50%;background:${verdictBg};"></div>
+      <span style="font-weight:700;color:${verdictBg};">${verdictText}</span>
+      <span style="font-size:13px;color:var(--text-secondary);">Pivot Status</span>
+    </div>
+  `;
+
+  signals.forEach(sig => {
+    let sigColor = 'var(--text-secondary)';
+    if (sig.type === 'good') sigColor = 'var(--success)';
+    else if (sig.type === 'action') sigColor = 'var(--danger)';
+    else if (sig.type === 'caution') sigColor = 'var(--warning)';
+
+    html += `<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border-light);">
+      <span style="color:${sigColor};font-size:18px;flex-shrink:0;">${sig.icon}</span>
+      <span style="font-size:13px;color:var(--text-secondary);">${sig.text}</span>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
 // Auto-skip gate if already authenticated this session
 if (sessionStorage.getItem('cc_auth') === 'true') {
   document.getElementById('password-gate').classList.add('hidden');
@@ -2191,7 +2485,7 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
 });
 
 // ── Score Cards ─────────────────────────────────────────────
-(function renderScoreCards() {
+function renderScoreCards() {
   const container = document.getElementById('score-cards');
   container.innerHTML = SCORE_CARDS.map(card => `
     <div class="score-card ${card.status}">
@@ -2201,10 +2495,10 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
       <div class="sc-delta ${card.status}">${card.delta}</div>
     </div>
   `).join('');
-})();
+}
 
 // ── Revenue Chart ───────────────────────────────────────────
-(function renderChart() {
+function renderChart() {
   const ctx = document.getElementById('revenueChart').getContext('2d');
   const labels = MONTHLY_DATA.map(d => d.month);
   const values = MONTHLY_DATA.map(d => d.total);
@@ -2281,10 +2575,10 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
       }
     }
   });
-})();
+}
 
 // ── Month-over-Month Table ──────────────────────────────────
-(function renderMonthTable() {
+function renderMonthTable() {
   const tbody = document.getElementById('month-tbody');
   const rows = MONTHLY_DATA.filter(d => d.total > 0 || d.paid > 0);
   tbody.innerHTML = rows.map(d => {
@@ -2317,7 +2611,7 @@ document.getElementById('today-date').textContent = new Date().toLocaleDateStrin
     <td class="num" style="color:var(--text-secondary)">of $${(3800*12).toLocaleString()}</td>
     <td style="text-align:center;color:var(--text-secondary)">${((ytdTotal / (3800*12)) * 100).toFixed(1)}%</td>
   </tr>`;
-})();
+}
 
 // ── Market Position Card ────────────────────────────────────
 // ── Trend arrow helper ─────────────────────────────────────
@@ -2335,7 +2629,7 @@ function trendArrow(current, previous, higherIsGood) {
   return `<span class="trend-arrow ${cls}" title="${arrow} ${pct}% vs last month">${arrow}</span>`;
 }
 
-(function renderMarketCard() {
+function renderMarketCard() {
   const m = MARKET_DATA;
   const prev = m.previousMonth;
   const container = document.getElementById('market-card');
@@ -2411,10 +2705,10 @@ function trendArrow(current, previous, higherIsGood) {
     </div>
     <p class="card-note">${m.source} · ${m.date}</p>
   `;
-})();
+}
 
 // ── Revenue Simulator ──────────────────────────────────────
-(function renderSimulator() {
+function renderSimulator() {
   const t = MARKET_DATA.targets;
   const simContainer = document.getElementById('market-simulator');
 
@@ -2449,7 +2743,7 @@ function trendArrow(current, previous, higherIsGood) {
     </div>
   `;
   updateSimulator();
-})();
+}
 
 function updateSimulator() {
   const adr = parseInt(document.getElementById('sim-adr').value);
@@ -2485,7 +2779,7 @@ function updateSimulator() {
 }
 
 // ── Seasonal ADR Trend Chart ───────────────────────────────
-(function renderSeasonalChart() {
+function renderSeasonalChart() {
   const ctx = document.getElementById('seasonalChart').getContext('2d');
   new Chart(ctx, {
     type: 'line',
@@ -2569,10 +2863,10 @@ function updateSimulator() {
       interaction: { intersect: false, mode: 'index' },
     }
   });
-})();
+}
 
 // ── Booking Pipeline Table (S2) ─────────────────────────────
-(function renderBookings() {
+function renderBookings() {
   const tbody = document.getElementById('booking-tbody');
   const countChip = document.getElementById('booking-count-chip');
   const today = new Date();
@@ -2626,10 +2920,10 @@ function updateSimulator() {
 
   tbody.innerHTML = rows.join('');
   countChip.textContent = activeBookings.length + ' upcoming';
-})();
+}
 
 // ── Revenue Pipeline Projections (S2) ───────────────────────
-(function renderPipeline() {
+function renderPipeline() {
   const container = document.getElementById('pipeline-boxes');
   const alertArea = document.getElementById('pipeline-alert-area');
   const today = new Date();
@@ -2732,10 +3026,10 @@ function updateSimulator() {
   }
 
   alertArea.innerHTML = alerts.join('');
-})();
+}
 
 // ── Event Calendar (S3 — Smart Alerts) ─────────────────────
-(function renderEvents() {
+function renderEvents() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -2892,7 +3186,7 @@ function updateSimulator() {
     pastEl.innerHTML = past.map(renderRow).join('');
     pastEl.style.display = 'none';
   }
-})();
+}
 
 // ── Action Center (S4 — Enhanced) ───────────────────────────
 // Merge custom actions from localStorage with embedded ACTIONS
@@ -3183,12 +3477,12 @@ renderMsgTabs();
 renderMsgContent();
 
 // ── House Rules ────────────────────────────────────────────
-(function renderHouseRules() {
+function renderHouseRules() {
   const body = document.getElementById('house-rules-body');
   body.innerHTML = HOUSE_RULES.map(r =>
     `<div class="house-rule-item"><span class="house-rule-icon">${r.icon}</span>${r.rule}</div>`
   ).join('');
-})();
+}
 
 function toggleHouseRules() {
   const body = document.getElementById('house-rules-body');
@@ -3287,6 +3581,10 @@ function renderReportContent() {
       <div class="report-metric">
         <div class="report-metric-value">${reviews}</div>
         <div class="report-metric-label">Total Reviews</div>
+      </div>
+      <div class="report-metric">
+        <div class="report-metric-value" style="color:${detail && detail.bookings > 0 ? (((detail.cleaningFeeCharged - detail.cleaningCost) * detail.bookings) >= 0 ? 'var(--success)' : 'var(--danger)') : 'var(--text-secondary)'};">$${detail && detail.bookings > 0 ? Math.round((detail.cleaningFeeCharged - detail.cleaningCost) * detail.bookings).toLocaleString() : '—'}</div>
+        <div class="report-metric-label">Cleaning Fee Net</div>
       </div>
     </div>
   `;
@@ -3442,8 +3740,13 @@ function generateInsights(idx, d, detail) {
   return insights.slice(0, 5);
 }
 
-renderReportPills();
-renderReportContent();
+// ── Initialize with fallback data and render
+renderAll();
+
+// ── Attempt to fetch CSV data
+window.addEventListener('load', function() {
+  fetchSheetData();
+});
 </script>
 </body>
 </html>

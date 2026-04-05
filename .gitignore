@@ -1,3 +1,18 @@
+# OS
 .DS_Store
+
+# Local tools
 serve.py
 /tmp/
+
+# Sensitive docs — keep local, never push
+Docs/
+Instuctions and prints/
+
+# Strategy files — keep local, not needed for the site
+dc_airbnb_playbook.md
+airbnb_report_*.md
+listing_copy_*.md
+listing_comparison.html
+title_focus_group.html
+pricelabs_setup_and_insights.html
