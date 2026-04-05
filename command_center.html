@@ -1585,7 +1585,7 @@ body {
   <div class="gate-brand">
     <img src="Logo/1346_logo-blue.svg" alt="Thirteen4Six" class="gate-logo">
   </div>
-  <form class="gate-form" onsubmit="return checkPassword()">
+  <form class="gate-form" onsubmit="event.preventDefault(); checkPassword();">
     <label for="gate-pw" class="sr-only">Password</label>
     <input type="password" id="gate-pw" class="gate-input" placeholder="Enter password" autocomplete="off" autofocus aria-label="Enter password">
     <button type="submit" class="gate-btn">Enter</button>
@@ -1636,7 +1636,7 @@ body {
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
     PriceLabs
   </a>
-  <a href="https://www.airbnb.com/rooms/1436366815078329705" target="_blank" class="ql-btn">
+  <a href="https://www.airbnb.com/hosting/listings" target="_blank" class="ql-btn">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
     View Listing
   </a>
@@ -1937,10 +1937,23 @@ body {
      ══════════════════════════════════════════════════════════════ -->
 <script id="dashboard-data">
 // ── PASSWORD ────────────────────────────────────────────────
-// Change this to your desired password.
-// For production, consider a hash-based approach.
-// Set your password here — don't commit the real one to a public repo.
-const GATE_PASSWORD = localStorage.getItem('t46_pw') || "CHANGE_ME";
+// Hash-based authentication: the real password never appears in this file.
+// We store a SHA-256 hash of the password. When the user types their password,
+// we hash it and compare. This is safe to commit publicly.
+const GATE_PASSWORD_HASH = "ae9070b1c54cccbf9c463f5e086c2426434bce127ee5f1068e005651f72bdb82";
+
+async function hashPassword(pw) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pw);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyPassword(input) {
+  const hashed = await hashPassword(input);
+  return hashed === GATE_PASSWORD_HASH;
+}
 
 // ── GOOGLE SHEET CSV INTEGRATION ────────────────────────────
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vThVkBYJMMlB9yQfxqvfXMMmCbSDI-YRs7SND8dwPDtE2Y7jAFrlraieDrbvrKvV1ttLRaKq4sOYQ02/pub?output=csv';
@@ -2314,9 +2327,10 @@ const HOUSE_RULES = [
      ══════════════════════════════════════════════════════════════ -->
 <script>
 // ── Password Gate ────────────────────────────────────────────
-function checkPassword() {
+async function checkPassword() {
   const input = document.getElementById('gate-pw').value;
-  if (input === GATE_PASSWORD) {
+  const valid = await verifyPassword(input);
+  if (valid) {
     document.getElementById('password-gate').classList.add('hidden');
     sessionStorage.setItem('cc_auth', 'true');
     return false;
