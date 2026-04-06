@@ -2070,14 +2070,19 @@ async function fetchSheetData() {
 
     DATA_SOURCE = 'sheet';
     if (loadingBanner) loadingBanner.style.display = 'none';
+    // Hide any previous error banner on success
+    const errorBanner = document.getElementById('data-error-banner');
+    if (errorBanner) errorBanner.style.display = 'none';
     renderAll();
   } catch (error) {
     console.error('CSV fetch failed:', error);
-    DATA_SOURCE = 'fallback';
-    const errorBanner = document.getElementById('data-error-banner');
-    if (errorBanner) {
-      errorBanner.style.display = 'flex';
-      errorBanner.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>Data sync issue:</strong> Using fallback data. Check your internet connection.</span>`;
+    if (DATA_SOURCE !== 'sheet') {
+      DATA_SOURCE = 'fallback';
+      const errorBanner = document.getElementById('data-error-banner');
+      if (errorBanner) {
+        errorBanner.style.display = 'flex';
+        errorBanner.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span><strong>Data sync issue:</strong> Using fallback data. Check your internet connection.</span>`;
+      }
     }
     if (loadingBanner) loadingBanner.style.display = 'none';
     renderAll();
@@ -2512,15 +2517,18 @@ function renderScoreCards() {
 }
 
 // ── Revenue Chart ───────────────────────────────────────────
+let revenueChartInstance = null;
 function renderChart() {
-  const ctx = document.getElementById('revenueChart').getContext('2d');
+  const canvas = document.getElementById('revenueChart');
+  if (revenueChartInstance) { revenueChartInstance.destroy(); revenueChartInstance = null; }
+  const ctx = canvas.getContext('2d');
   const labels = MONTHLY_DATA.map(d => d.month);
   const values = MONTHLY_DATA.map(d => d.total);
 
   // Months with actual paid data vs projected
   const isActual = MONTHLY_DATA.map(d => d.paid > 0);
 
-  new Chart(ctx, {
+  revenueChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
@@ -2793,9 +2801,12 @@ function updateSimulator() {
 }
 
 // ── Seasonal ADR Trend Chart ───────────────────────────────
+let seasonalChartInstance = null;
 function renderSeasonalChart() {
-  const ctx = document.getElementById('seasonalChart').getContext('2d');
-  new Chart(ctx, {
+  const canvas = document.getElementById('seasonalChart');
+  if (seasonalChartInstance) { seasonalChartInstance.destroy(); seasonalChartInstance = null; }
+  const ctx = canvas.getContext('2d');
+  seasonalChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
       labels: SEASONAL_ADR.map(d => d.month),
